@@ -8,12 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas con Cache Busting -->
-        <link rel="stylesheet" href="css/leaflet.css?v=9.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=9.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=9.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=9.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=9.0">
-        <link rel="stylesheet" href="css/leaflet-measure.css?v=9.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=11.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=11.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=11.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=11.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=11.0">
         
         <style>
         /* Pantalla completa */
@@ -78,7 +77,13 @@
             font-weight: 600;
         }
 
-        /* AGROPAMIENTO EN BARRA LATERAL FLOTANTE DERECHA */
+        /* ZOOM EN EL LADO IZQUIERDO */
+        .leaflet-top.leaflet-left {
+            top: 15px !important;
+            left: 15px !important;
+        }
+
+        /* BARRA FLOTANTE DERECHA (CAPAS Y LEYENDA) */
         .leaflet-top.leaflet-right {
             top: 15px !important;
             right: 15px !important;
@@ -96,7 +101,7 @@
             overflow: hidden !important;
         }
 
-        /* ICONO DE CAPAS EN LA BARRA LATERAL */
+        /* PANEL DE CAPAS CON SEPARACIÓN EN SECCIONES */
         .leaflet-control-layers {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(12px) !important;
@@ -104,6 +109,7 @@
             border: 1px solid rgba(29, 82, 160, 0.3) !important;
             border-radius: 10px !important;
             color: #1D52A0 !important;
+            padding: 4px !important;
         }
 
         .leaflet-control-layers-toggle {
@@ -129,12 +135,24 @@
             color: #009EE2 !important;
         }
 
+        /* ENCABEZADOS DE SECCIÓN (MAPAS BASE VS SHAPES) */
+        .layer-section-header {
+            font-size: 11px;
+            font-weight: 800;
+            color: #009EE2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 8px 4px 4px 4px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid rgba(0, 158, 226, 0.3);
+        }
+
         .leaflet-control-layers-overlays label,
         .leaflet-control-layers-base label {
             display: flex !important;
             align-items: center !important;
-            margin-bottom: 8px !important;
-            font-size: 12px !important;
+            margin-bottom: 6px !important;
+            font-size: 11px !important;
             font-weight: 700 !important;
             color: #1D52A0 !important;
             cursor: pointer !important;
@@ -152,18 +170,96 @@
         .leaflet-control-layers input[type="checkbox"],
         .leaflet-control-layers input[type="radio"] {
             accent-color: #009EE2 !important;
-            width: 16px !important;
-            height: 16px !important;
+            width: 15px !important;
+            height: 15px !important;
             margin-right: 8px !important;
             cursor: pointer !important;
         }
 
         .leaflet-control-layers-separator {
-            border-top: 1px solid rgba(29, 82, 160, 0.2) !important;
+            border-top: 1px dashed rgba(29, 82, 160, 0.2) !important;
             margin: 10px 0 !important;
         }
 
-        /* ESTILO PARA LOS DEMÁS BOTONES DE LA BARRA LATERAL (ZOOM Y MEDIDA) */
+        /* ICONO Y PANEL DE LEYENDA SEGÚN EL TIPO DE SHP */
+        .legend-control {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(29, 82, 160, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .legend-toggle {
+            width: 40px;
+            height: 40px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .legend-toggle i {
+            font-size: 18px;
+            color: #1D52A0;
+        }
+
+        .legend-toggle:hover i {
+            color: #009EE2;
+        }
+
+        .legend-content {
+            display: none;
+            padding: 12px 16px;
+            max-height: 350px;
+            overflow-y: auto;
+            min-width: 210px;
+        }
+
+        .legend-content.active {
+            display: block;
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1D52A0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(29, 82, 160, 0.2);
+            padding-bottom: 4px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #1D52A0;
+            text-transform: uppercase;
+        }
+
+        .legend-symbol {
+            width: 18px;
+            height: 12px;
+            margin-right: 10px;
+            border-radius: 2px;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .legend-line {
+            width: 18px;
+            height: 3px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        /* BOTONES DE ZOOM */
         .leaflet-bar a {
             width: 40px !important;
             height: 40px !important;
@@ -217,7 +313,6 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
-        <script src="js/leaflet-measure.js"></script>
         <script src="data/DRENAJESCACUASIA_2.js"></script>
         <script src="data/LAGUNASCAUCASIA_3.js"></script>
         <script src="data/CIENAGASCAUCASIA_4.js"></script>
@@ -248,20 +343,12 @@
             return tempDiv.innerHTML;
         }
 
-        // HERRAMIENTAS UBICADAS EN LA BARRA LATERAL FLOTANTE DERECHA ('topright')
-        var zoomControl = L.control.zoom({ position: 'topright' }).addTo(map);
-        var measureControl = new L.Control.Measure({
-            position: 'topright',
-            primaryLengthUnit: 'meters',
-            secondaryLengthUnit: 'kilometers',
-            primaryAreaUnit: 'sqmeters',
-            secondaryAreaUnit: 'hectares'
-        });
-        measureControl.addTo(map);
+        // CONTROL DE ZOOM A LA IZQUIERDA
+        var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
 
         var bounds_group = new L.featureGroup([]);
 
-        // CAPAS BASE
+        // CAPAS BASE (MAPAS BASE)
         map.createPane('pane_OSMStandard_0');
         map.getPane('pane_OSMStandard_0').style.zIndex = 400;
         var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -281,7 +368,7 @@
         });
         map.addLayer(layer_GoogleSatellite_1);
 
-        // CAPAS VECTORIALES
+        // CAPAS VECTORIALES (SHAPES)
         function pop_DRENAJESCACUASIA_2(feature, layer) {
             var popupContent = '<table><tr><td colspan="2">' + (feature.properties['SECTOR'] !== null ? autolinker.link(String(feature.properties['SECTOR'])) : '') + '</td></tr></table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -330,12 +417,13 @@
         bounds_group.addLayer(layer_CUENCASALCANTARILLADO_8);
         map.addLayer(layer_CUENCASALCANTARILLADO_8);
 
-        // CAPAS BASE Y SUPERPUESTAS
+        // MAPAS BASE (RADIO BUTTONS - SOLO SE SELECCIONA UNO)
         var baseMaps = {
             "GOOGLE SATELLITE": layer_GoogleSatellite_1,
             "OPENSTREETMAP": layer_OSMStandard_0
         };
 
+        // CAPAS VECTORIALES (CHECKBOXES - SE PUEDEN ACTIVAR/DESACTIVAR LIBREMENTE)
         var overlayMaps = {
             "CUENCAS ALCANTARILLADO": layer_CUENCASALCANTARILLADO_8,
             "BARRIOS": layer_BARRIOSCAUCASIA_7,
@@ -346,11 +434,59 @@
             "DRENAJES": layer_DRENAJESCACUASIA_2
         };
 
-        // PANEL DE CAPAS DESPLEGABLE EN LA BARRA LATERAL
+        // CONTROL DE CAPAS
         var layerControl = L.control.layers(baseMaps, overlayMaps, {
             collapsed: true,
             position: 'topright'
         }).addTo(map);
+
+        // INSERTAR TITULOS DE SECCIÓN DENTRO DEL PANEL DESPLEGABLE
+        var container = layerControl.getContainer();
+        var baseSection = container.querySelector('.leaflet-control-layers-base');
+        var overlaysSection = container.querySelector('.leaflet-control-layers-overlays');
+
+        if (baseSection) {
+            var baseHeader = document.createElement('div');
+            baseHeader.className = 'layer-section-header';
+            baseHeader.innerText = 'Mapas Base';
+            baseSection.insertBefore(baseHeader, baseSection.firstChild);
+        }
+
+        if (overlaysSection) {
+            var overlayHeader = document.createElement('div');
+            overlayHeader.className = 'layer-section-header';
+            overlayHeader.innerText = 'Capas (Shapes)';
+            overlaysSection.insertBefore(overlayHeader, overlaysSection.firstChild);
+        }
+
+        // PANEL DE LEYENDA DESPLEGABLE
+        var legendControl = L.control({ position: 'topright' });
+        legendControl.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'legend-control');
+            div.innerHTML = `
+                <div class="legend-toggle" id="legendBtn" title="Leyenda de Capas">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+                <div class="legend-content" id="legendBox">
+                    <div class="legend-title">Leyenda</div>
+                    <div class="legend-item"><span class="legend-line" style="background: rgba(227,26,28,1.0);"></span>CUENCAS ALCANTARILLADO</div>
+                    <div class="legend-item"><span class="legend-symbol" style="background: rgba(35,35,35,0.3); border: 1px solid #232323;"></span>BARRIOS</div>
+                    <div class="legend-item"><span class="legend-symbol" style="background: rgba(152,125,183,0.5); border: 1px solid #232323;"></span>PANTANOS</div>
+                    <div class="legend-item"><span class="legend-symbol" style="background: rgba(184,155,107,0.5); border: 1px solid #232323;"></span>RÍO CAUCA</div>
+                    <div class="legend-item"><span class="legend-symbol" style="background: rgba(255,139,18,0.5); border: 1px solid #232323;"></span>CIÉNAGAS</div>
+                    <div class="legend-item"><span class="legend-symbol" style="background: rgba(114,155,111,0.5); border: 1px solid #232323;"></span>LAGUNAS</div>
+                    <div class="legend-item"><span class="legend-line" style="background: rgba(0,158,226,1.0); height: 2px;"></span>DRENAJES</div>
+                </div>
+            `;
+            return div;
+        };
+        legendControl.addTo(map);
+
+        // EVENTO DESPLEGABLE DE LEYENDA
+        document.getElementById('legendBtn').addEventListener('click', function() {
+            var box = document.getElementById('legendBox');
+            box.classList.toggle('active');
+        });
 
         if (bounds_group.getLayers().length) {
             map.fitBounds(bounds_group.getBounds());
