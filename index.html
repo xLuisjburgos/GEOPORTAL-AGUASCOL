@@ -8,12 +8,12 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas con Cache Busting -->
-        <link rel="stylesheet" href="css/leaflet.css?v=6.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=6.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=6.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=6.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=6.0">
-        <link rel="stylesheet" href="css/leaflet-measure.css?v=6.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=8.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=8.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=8.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=8.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=8.0">
+        <link rel="stylesheet" href="css/leaflet-measure.css?v=8.0">
         
         <style>
         /* Pantalla completa */
@@ -78,48 +78,6 @@
             font-weight: 600;
         }
 
-        /* CONTROL FLOTANTE DE OPACIDAD (SLIDER) */
-        .opacity-control {
-            position: absolute;
-            bottom: 25px;
-            left: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 10px 14px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(29, 82, 160, 0.3);
-        }
-
-        .slider-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: #1D52A0;
-            margin-bottom: 6px;
-            text-transform: UPPERCASE;
-        }
-
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .slider-container input[type="range"] {
-            accent-color: #009EE2;
-            cursor: pointer;
-            width: 110px;
-        }
-
-        #opacityValue {
-            font-size: 12px;
-            font-weight: bold;
-            color: #1D52A0;
-            min-width: 32px;
-        }
-
         /* PANEL DE CAPAS DESPLEGABLE CON ESTILO CORPORATIVO */
         .leaflet-control-layers {
             background: rgba(255, 255, 255, 0.95) !important;
@@ -129,6 +87,30 @@
             border-radius: 10px !important;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
             color: #1D52A0 !important;
+        }
+
+        .leaflet-control-layers-toggle {
+            background-image: none !important;
+            background-color: #ffffff !important;
+            border-radius: 8px !important;
+            width: 38px !important;
+            height: 38px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-decoration: none !important;
+        }
+
+        .leaflet-control-layers-toggle::before {
+            font-family: "Font Awesome 5 Free" !important;
+            font-weight: 900 !important;
+            content: "\f5fd" !important; /* Icono layer-group */
+            font-size: 18px !important;
+            color: #1D52A0 !important;
+        }
+
+        .leaflet-control-layers-toggle:hover::before {
+            color: #009EE2 !important;
         }
 
         .leaflet-control-layers-overlays label,
@@ -204,15 +186,6 @@
             <div>
                 <div class="header-title">GEOPORTAL - AGUASCOL</div>
                 <div class="header-subtitle">MUNICIPIO DE CAUCASIA</div>
-            </div>
-        </div>
-
-        <!-- CONTROL DE OPACIDAD -->
-        <div class="opacity-control">
-            <div class="slider-title">TRANSPARENCIA DE CAPAS</div>
-            <div class="slider-container">
-                <input type="range" id="opacitySlider" min="0" max="100" value="50">
-                <span id="opacityValue">50%</span>
             </div>
         </div>
 
@@ -357,41 +330,15 @@
             "DRENAJES": layer_DRENAJESCACUASIA_2
         };
 
-        // PANEL DE CAPAS DESPLEGABLE (collapsed: true)
+        // PANEL DE CAPAS DESPLEGABLE
         var layerControl = L.control.layers(baseMaps, overlayMaps, {
-            collapsed: true, // Se pliega en un botón de capas
+            collapsed: true,
             position: 'topright'
         }).addTo(map);
 
         if (bounds_group.getLayers().length) {
             map.fitBounds(bounds_group.getBounds());
         }
-
-        // SLIDER DE OPACIDAD
-        var slider = document.getElementById('opacitySlider');
-        var output = document.getElementById('opacityValue');
-
-        slider.addEventListener('input', function() {
-            var opacityVal = this.value / 100;
-            output.innerHTML = this.value + '%';
-
-            var vectorLayers = [
-                layer_CUENCASALCANTARILLADO_8,
-                layer_BARRIOSCAUCASIA_7,
-                layer_PANTANOSCAUCASIA_6,
-                layer_RIOCAUCA_5,
-                layer_CIENAGASCAUCASIA_4,
-                layer_LAGUNASCAUCASIA_3
-            ];
-
-            vectorLayers.forEach(function(layer) {
-                if (map.hasLayer(layer)) {
-                    layer.setStyle({
-                        fillOpacity: opacityVal
-                    });
-                }
-            });
-        });
         </script>
     </body>
 </html>
