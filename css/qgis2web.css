@@ -197,4 +197,31 @@
         .leaflet-marker-icon{
             white-space: nowrap;
         }
+
+/* --- ESTILO MODERNO PARA MENÚ Y LEYENDA --- */
+.leaflet-control-layers {
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    padding: 12px !important;
+    font-family: Arial, sans-serif !important;
+    border: 1px solid rgba(220, 220, 220, 0.5) !important;
+}
+
+.leaflet-control-layers-overlays label,
+.leaflet-control-layers-base label {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 6px !important;
+    font-size: 14px !important;
+    color: #2c3e50 !important;
+    cursor: pointer !important;
+}
+
+.leaflet-control-layers input[type="checkbox"],
+.leaflet-control-layers input[type="radio"] {
+    accent-color: #2563eb !important; /* Casilla azul moderna */
+    margin-right: 8px !important;
+}
         
