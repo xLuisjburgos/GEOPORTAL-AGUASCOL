@@ -368,54 +368,69 @@
         });
         map.addLayer(layer_GoogleSatellite_1);
 
-        // CAPAS VECTORIALES (SHAPES)
-        function pop_DRENAJESCACUASIA_2(feature, layer) {
-            var popupContent = '<table><tr><td colspan="2">' + (feature.properties['SECTOR'] !== null ? autolinker.link(String(feature.properties['SECTOR'])) : '') + '</td></tr></table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-            layer.bindPopup(content, { maxHeight: 400 });
+        // CAPAS VECTORIALES CON POPUPS HABILITADOS
+function createPopFunction(layerName) {
+    return function pop_Feature(feature, layer) {
+        var popupContent = '<table>';
+        for (var prop in feature.properties) {
+            if (feature.properties[prop] !== null) {
+                popupContent += '<tr><th style="padding-right:8px; text-transform:uppercase; font-size:11px; color:#1D52A0;">' + prop + ':</th><td style="font-size:11px;">' + autolinker.link(String(feature.properties[prop])) + '</td></tr>';
+            }
         }
-        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, {
-            onEachFeature: pop_DRENAJESCACUASIA_2,
-            style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; }
-        });
-        bounds_group.addLayer(layer_DRENAJESCACUASIA_2);
-        map.addLayer(layer_DRENAJESCACUASIA_2);
+        popupContent += '</table>';
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.bindPopup(content, { maxHeight: 400 });
+    };
+}
 
-        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; }
-        });
-        bounds_group.addLayer(layer_LAGUNASCAUCASIA_3);
-        map.addLayer(layer_LAGUNASCAUCASIA_3);
+var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, {
+    onEachFeature: createPopFunction('DRENAJESCACUASIA_2'),
+    style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; }
+});
+bounds_group.addLayer(layer_DRENAJESCACUASIA_2);
+map.addLayer(layer_DRENAJESCACUASIA_2);
 
-        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; }
-        });
-        bounds_group.addLayer(layer_CIENAGASCAUCASIA_4);
-        map.addLayer(layer_CIENAGASCAUCASIA_4);
+var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, {
+    onEachFeature: createPopFunction('LAGUNASCAUCASIA_3'),
+    style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; }
+});
+bounds_group.addLayer(layer_LAGUNASCAUCASIA_3);
+map.addLayer(layer_LAGUNASCAUCASIA_3);
 
-        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; }
-        });
-        bounds_group.addLayer(layer_RIOCAUCA_5);
-        map.addLayer(layer_RIOCAUCA_5);
+var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, {
+    onEachFeature: createPopFunction('CIENAGASCAUCASIA_4'),
+    style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; }
+});
+bounds_group.addLayer(layer_CIENAGASCAUCASIA_4);
+map.addLayer(layer_CIENAGASCAUCASIA_4);
 
-        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; }
-        });
-        bounds_group.addLayer(layer_PANTANOSCAUCASIA_6);
-        map.addLayer(layer_PANTANOSCAUCASIA_6);
+var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, {
+    onEachFeature: createPopFunction('RIOCAUCA_5'),
+    style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; }
+});
+bounds_group.addLayer(layer_RIOCAUCA_5);
+map.addLayer(layer_RIOCAUCA_5);
 
-        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; }
-        });
-        bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
-        map.addLayer(layer_BARRIOSCAUCASIA_7);
+var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, {
+    onEachFeature: createPopFunction('PANTANOSCAUCASIA_6'),
+    style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; }
+});
+bounds_group.addLayer(layer_PANTANOSCAUCASIA_6);
+map.addLayer(layer_PANTANOSCAUCASIA_6);
 
-        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, {
-            style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; }
-        });
-        bounds_group.addLayer(layer_CUENCASALCANTARILLADO_8);
-        map.addLayer(layer_CUENCASALCANTARILLADO_8);
+var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, {
+    onEachFeature: createPopFunction('BARRIOSCAUCASIA_7'),
+    style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; }
+});
+bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
+map.addLayer(layer_BARRIOSCAUCASIA_7);
+
+var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, {
+    onEachFeature: createPopFunction('CUENCASALCANTARILLADO_8'),
+    style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; }
+});
+bounds_group.addLayer(layer_CUENCASALCANTARILLADO_8);
+map.addLayer(layer_CUENCASALCANTARILLADO_8);
 
         // MAPAS BASE (RADIO BUTTONS - SOLO SE SELECCIONA UNO)
         var baseMaps = {
