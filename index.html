@@ -7,12 +7,13 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=2.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=2.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=2.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=2.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=2.0">
-        <link rel="stylesheet" href="css/leaflet-measure.css?v=2.0">
+        <!-- Hojas de estilo externas con Cache Busting -->
+        <link rel="stylesheet" href="css/leaflet.css?v=4.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=4.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=4.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=4.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=4.0">
+        <link rel="stylesheet" href="css/leaflet-measure.css?v=4.0">
         
         <style>
         /* Pantalla completa */
@@ -35,18 +36,100 @@
             height: 100% !important;
         }
 
+        /* BARRA ENCABEZADO SUPERIOR CON LOGO CORPORATIVO */
+        .map-header {
+            position: absolute;
+            top: 12px;
+            left: 60px;
+            z-index: 1000;
+            background: rgba(29, 82, 160, 0.90); /* Color #1D52A0 */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0, 158, 226, 0.4); /* Borde #009EE2 */
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .map-header img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: #009EE2; /* Color secundario #009EE2 */
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        /* CONTROL FLOTANTE DE OPACIDAD (SLIDER) */
+        .opacity-control {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(29, 82, 160, 0.3);
+        }
+
+        .slider-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1D52A0;
+            margin-bottom: 6px;
+            text-transform: UPPERCASE;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-container input[type="range"] {
+            accent-color: #009EE2;
+            cursor: pointer;
+            width: 110px;
+        }
+
+        #opacityValue {
+            font-size: 12px;
+            font-weight: bold;
+            color: #1D52A0;
+            min-width: 32px;
+        }
+
         /* DISEÑO MODERNO DE PANEL DE CAPAS Y LEYENDA */
         .leaflet-control-layers,
         .leaflet-touch .leaflet-control-layers,
         .leaflet-control-layers-expanded {
-            background: rgba(255, 255, 255, 0.90) !important;
+            background: rgba(255, 255, 255, 0.92) !important;
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            border: 1px solid rgba(29, 82, 160, 0.2) !important;
             border-radius: 12px !important;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
             padding: 12px 16px !important;
-            color: #1e293b !important;
+            color: #1D52A0 !important;
         }
 
         .leaflet-control-layers-overlays label,
@@ -54,15 +137,24 @@
             display: flex !important;
             align-items: center !important;
             margin-bottom: 8px !important;
-            font-size: 13px !important;
-            font-weight: 500 !important;
-            color: #334155 !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #1D52A0 !important;
             cursor: pointer !important;
+            transition: background-color 0.2s ease !important;
+            padding: 4px 6px !important;
+            border-radius: 6px !important;
+            text-transform: uppercase !important;
+        }
+
+        .leaflet-control-layers-overlays label:hover,
+        .leaflet-control-layers-base label:hover {
+            background-color: rgba(0, 158, 226, 0.1) !important;
         }
 
         .leaflet-control-layers input[type="checkbox"],
         .leaflet-control-layers input[type="radio"] {
-            accent-color: #2563eb !important;
+            accent-color: #009EE2 !important;
             width: 16px !important;
             height: 16px !important;
             margin-right: 8px !important;
@@ -70,7 +162,7 @@
         }
 
         .leaflet-control-layers-separator {
-            border-top: 1px solid #e2e8f0 !important;
+            border-top: 1px solid rgba(29, 82, 160, 0.2) !important;
             margin: 10px 0 !important;
         }
 
@@ -83,21 +175,48 @@
         }
 
         .leaflet-bar a {
-            background-color: rgba(255, 255, 255, 0.9) !important;
+            background-color: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(8px) !important;
-            color: #334155 !important;
+            color: #1D52A0 !important;
             border-bottom: 1px solid #f1f5f9 !important;
             transition: background-color 0.2s ease !important;
         }
 
         .leaflet-bar a:hover {
-            background-color: #f8fafc !important;
-            color: #2563eb !important;
+            background-color: #009EE2 !important;
+            color: #ffffff !important;
+        }
+
+        /* ESTILO POPUPS/VENTANAS FLOTANTES */
+        .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(8px) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid #009EE2 !important;
         }
         </style>
-        <title>Mapa Interactivo - Caucasia</title>
+        <title>GEOPORTAL - AGUASCOL</title>
     </head>
     <body>
+        <!-- ENCABEZADO SUPERIOR -->
+        <div class="map-header">
+            <img src="LOGO.png" alt="AGUASCOL LOGO">
+            <div>
+                <div class="header-title">GEOPORTAL - AGUASCOL</div>
+                <div class="header-subtitle">MUNICIPIO DE CAUCASIA</div>
+            </div>
+        </div>
+
+        <!-- CONTROL DE OPACIDAD -->
+        <div class="opacity-control">
+            <div class="slider-title">TRANSPARENCIA DE CAPAS</div>
+            <div class="slider-container">
+                <input type="range" id="opacitySlider" min="0" max="100" value="50">
+                <span id="opacityValue">50%</span>
+            </div>
+        </div>
+
         <div id="map"></div>
 
         <script src="js/qgis2web_expressions.js"></script>
@@ -203,61 +322,61 @@
         }
         var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, {
             onEachFeature: pop_DRENAJESCACUASIA_2,
-            style: function() { return { color: 'rgba(0,145,255,1.0)', weight: 2.0 }; }
+            style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; }
         });
         bounds_group.addLayer(layer_DRENAJESCACUASIA_2);
         map.addLayer(layer_DRENAJESCACUASIA_2);
 
         var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 1 }; }
+            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; }
         });
         bounds_group.addLayer(layer_LAGUNASCAUCASIA_3);
         map.addLayer(layer_LAGUNASCAUCASIA_3);
 
         var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 1 }; }
+            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; }
         });
         bounds_group.addLayer(layer_CIENAGASCAUCASIA_4);
         map.addLayer(layer_CIENAGASCAUCASIA_4);
 
         var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 1 }; }
+            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; }
         });
         bounds_group.addLayer(layer_RIOCAUCA_5);
         map.addLayer(layer_RIOCAUCA_5);
 
         var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 1 }; }
+            style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; }
         });
         bounds_group.addLayer(layer_PANTANOSCAUCASIA_6);
         map.addLayer(layer_PANTANOSCAUCASIA_6);
 
         var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, {
-            style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.2 }; }
+            style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; }
         });
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         map.addLayer(layer_BARRIOSCAUCASIA_7);
 
         var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, {
-            style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.2 }; }
+            style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; }
         });
         bounds_group.addLayer(layer_CUENCASALCANTARILLADO_8);
         map.addLayer(layer_CUENCASALCANTARILLADO_8);
 
-        // --- CONTROL DE CAPAS (BASE Y SUPERPUESTAS) ---
+        // --- CONTROL DE CAPAS (BASE Y SUPERPUESTAS SIMPLIFICADAS) ---
         var baseMaps = {
-            "Google Satellite": layer_GoogleSatellite_1,
-            "OpenStreetMap": layer_OSMStandard_0
+            "GOOGLE SATELLITE": layer_GoogleSatellite_1,
+            "OPENSTREETMAP": layer_OSMStandard_0
         };
 
         var overlayMaps = {
-            "Cuencas Alcantarillado": layer_CUENCASALCANTARILLADO_8,
-            "Barrios Caucasia": layer_BARRIOSCAUCASIA_7,
-            "Pantanos Caucasia": layer_PANTANOSCAUCASIA_6,
-            "Río Cauca": layer_RIOCAUCA_5,
-            "Ciénagas Caucasia": layer_CIENAGASCAUCASIA_4,
-            "Lagunas Caucasia": layer_LAGUNASCAUCASIA_3,
-            "Drenajes Caucasia": layer_DRENAJESCACUASIA_2
+            "CUENCAS ALCANTARILLADO": layer_CUENCASALCANTARILLADO_8,
+            "BARRIOS": layer_BARRIOSCAUCASIA_7,
+            "PANTANOS": layer_PANTANOSCAUCASIA_6,
+            "RÍO CAUCA": layer_RIOCAUCA_5,
+            "CIÉNAGAS": layer_CIENAGASCAUCASIA_4,
+            "LAGUNAS": layer_LAGUNASCAUCASIA_3,
+            "DRENAJES": layer_DRENAJESCACUASIA_2
         };
 
         var layerControl = L.control.layers(baseMaps, overlayMaps, {
@@ -268,6 +387,32 @@
         if (bounds_group.getLayers().length) {
             map.fitBounds(bounds_group.getBounds());
         }
+
+        // --- LÓGICA INTERACTIVA DEL SLIDER DE OPACIDAD ---
+        var slider = document.getElementById('opacitySlider');
+        var output = document.getElementById('opacityValue');
+
+        slider.addEventListener('input', function() {
+            var opacityVal = this.value / 100;
+            output.innerHTML = this.value + '%';
+
+            var vectorLayers = [
+                layer_CUENCASALCANTARILLADO_8,
+                layer_BARRIOSCAUCASIA_7,
+                layer_PANTANOSCAUCASIA_6,
+                layer_RIOCAUCA_5,
+                layer_CIENAGASCAUCASIA_4,
+                layer_LAGUNASCAUCASIA_3
+            ];
+
+            vectorLayers.forEach(function(layer) {
+                if (map.hasLayer(layer)) {
+                    layer.setStyle({
+                        fillOpacity: opacityVal
+                    });
+                }
+            });
+        });
         </script>
     </body>
 </html>
