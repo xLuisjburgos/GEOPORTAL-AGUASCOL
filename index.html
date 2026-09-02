@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=16.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=16.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=16.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=16.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=16.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=17.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=17.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=17.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=17.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=17.0">
         
         <style>
         html, body {
@@ -218,7 +218,7 @@
             color: #ffffff !important;
         }
 
-        /* VENTANAS EMERGENTES FLOTANTES (PANEL DESPLEGABLE DE CADA OPCIÓN) */
+        /* VENTANAS EMERGENTES FLOTANTES ARRASTRABLES (DRAGGABLE) */
         .floating-panel {
             display: none;
             position: absolute;
@@ -233,13 +233,14 @@
             border: 1px solid rgba(29, 82, 160, 0.3);
             width: 270px;
             max-height: 75vh;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .floating-panel.active {
             display: block !important;
         }
 
+        /* ENCABEZADO DE LA VENTANA (ÁREA DE ARRASTRE) */
         .panel-header {
             background: #1D52A0;
             color: #ffffff;
@@ -252,6 +253,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #009EE2;
+            cursor: move; /* Indica que es arrastrable */
+            user-select: none;
         }
 
         .panel-close {
@@ -270,6 +273,8 @@
             color: #1D52A0;
             font-size: 11px;
             font-weight: 700;
+            max-height: calc(75vh - 45px);
+            overflow-y: auto;
         }
 
         .panel-body label {
@@ -429,9 +434,9 @@
             </div>
         </div>
 
-        <!-- 1. VENTANA EMERGENTE DESPLEGABLE: CAPAS -->
+        <!-- 1. VENTANA EMERGENTE DESPLEGABLE Y ARRASTRABLE: CAPAS -->
         <div class="floating-panel" id="panelLayers">
-            <div class="panel-header">
+            <div class="panel-header" id="panelLayersHeader">
                 <span>Capas de Información</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
@@ -446,9 +451,9 @@
             </div>
         </div>
 
-        <!-- 2. VENTANA EMERGENTE DESPLEGABLE: DIBUJO -->
+        <!-- 2. VENTANA EMERGENTE DESPLEGABLE Y ARRASTRABLE: DIBUJO -->
         <div class="floating-panel" id="panelDraw">
-            <div class="panel-header">
+            <div class="panel-header" id="panelDrawHeader">
                 <span>Herramientas de Dibujo</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
@@ -463,9 +468,9 @@
             </div>
         </div>
 
-        <!-- 3. VENTANA EMERGENTE DESPLEGABLE: MEDICIÓN -->
+        <!-- 3. VENTANA EMERGENTE DESPLEGABLE Y ARRASTRABLE: MEDICIÓN -->
         <div class="floating-panel" id="panelMeasure">
-            <div class="panel-header">
+            <div class="panel-header" id="panelMeasureHeader">
                 <span>Medición de Distancias</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
@@ -479,9 +484,9 @@
             </div>
         </div>
 
-        <!-- 4. VENTANA EMERGENTE DESPLEGABLE: LEYENDA -->
+        <!-- 4. VENTANA EMERGENTE DESPLEGABLE Y ARRASTRABLE: LEYENDA -->
         <div class="floating-panel" id="panelLegend">
-            <div class="panel-header">
+            <div class="panel-header" id="panelLegendHeader">
                 <span>Leyenda</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
@@ -496,9 +501,9 @@
             </div>
         </div>
 
-        <!-- 5. VENTANA EMERGENTE DESPLEGABLE: MAPAS BASE -->
+        <!-- 5. VENTANA EMERGENTE DESPLEGABLE Y ARRASTRABLE: MAPAS BASE -->
         <div class="floating-panel" id="panelBasemap">
-            <div class="panel-header">
+            <div class="panel-header" id="panelBasemapHeader">
                 <span>Mapas Base</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
@@ -666,6 +671,58 @@
         document.getElementById('btnMeasure').onclick = function(e) { e.stopPropagation(); togglePanel('panelMeasure', 'btnMeasure'); };
         document.getElementById('btnLegend').onclick = function(e) { e.stopPropagation(); togglePanel('panelLegend', 'btnLegend'); };
         document.getElementById('btnBasemap').onclick = function(e) { e.stopPropagation(); togglePanel('panelBasemap', 'btnBasemap'); };
+
+        // FUNCIÓN PARA HACER QUE LOS PANELES SEAN ARRASTRABLES (DRAGGABLE)
+        function makeElementDraggable(elmnt, header) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (header) {
+                header.onmousedown = dragMouseDown;
+                header.ontouchstart = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                pos3 = clientX;
+                pos4 = clientY;
+                
+                document.onmouseup = closeDragElement;
+                document.ontouchend = closeDragElement;
+                document.onmousemove = elementDrag;
+                document.ontouchmove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+                
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.right = "auto";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+            }
+        }
+
+        // ACTIVAR EL ARRASTRE EN CADA VENTANA EMERGENTE
+        makeElementDraggable(document.getElementById("panelLayers"), document.getElementById("panelLayersHeader"));
+        makeElementDraggable(document.getElementById("panelDraw"), document.getElementById("panelDrawHeader"));
+        makeElementDraggable(document.getElementById("panelMeasure"), document.getElementById("panelMeasureHeader"));
+        makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
+        makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
 
         // CHECKBOXES Y CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
