@@ -7,10 +7,10 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=32.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=32.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=32.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=32.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=33.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=33.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=33.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=33.0">
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
@@ -211,7 +211,7 @@
             color: #009EE2;
         }
 
-        /* VENTANAS DESPLEGABLES CON ENCABEZADO AZUL CORPORATIVO */
+        /* VENTANAS DESPLEGABLES */
         .floating-panel {
             display: none;
             position: absolute;
@@ -765,7 +765,7 @@
                 <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body-std">
-                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(227,26,28,1.0); margin-right:10px;"></span>CUENCAS ALCANTARILLADO</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(0,78,255,1.0); border-top:1px dashed #004eff; margin-right:10px;"></span>CUENCAS ALCANTARILLADO</div>
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(35,35,35,0.3); border:1px solid #232323; margin-right:10px;"></span>BARRIOS</div>
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(152,125,183,0.5); border:1px solid #232323; margin-right:10px;"></span>PANTANOS</div>
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(184,155,107,0.5); border:1px solid #232323; margin-right:10px;"></span>RÍO CAUCA</div>
@@ -839,13 +839,25 @@
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
         map.addLayer(layer_GoogleSatellite_1);
 
+        // ESTILO AZUL DISCONTINUO EXACTO DE QGIS PARA CUENCAS ALCANTARILLADO
+        var style_CUENCAS = {
+            color: 'rgba(0,78,255,1.0)',
+            weight: 3.0,
+            dashArray: '6.0,3.0',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            fill: true,
+            fillColor: 'rgba(213,180,60,0.0)',
+            fillOpacity: 0.0
+        };
+
         var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } });
         var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } });
         var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } });
         var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } });
         var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } });
         var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } });
-        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; } });
+        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return style_CUENCAS; } });
 
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
@@ -986,6 +998,7 @@
         makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
         makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
 
+        // EVENTOS ENCIENDE/APAGA CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
         document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
         document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
