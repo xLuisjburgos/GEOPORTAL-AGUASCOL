@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=18.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=18.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=18.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=18.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=18.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=19.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=19.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=19.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=19.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=19.0">
         
         <style>
         html, body {
@@ -33,6 +33,11 @@
             right: 0 !important;
             width: 100% !important;
             height: calc(100% - 55px) !important;
+        }
+
+        /* CURSOR EN MODO DE DIBUJO Y MEDICIÓN */
+        #map.drawing-active, #map.drawing-active .leaflet-interactive {
+            cursor: crosshair !important;
         }
 
         /* BARRA SUPERIOR AZUL CORPORATIVO */
@@ -224,7 +229,7 @@
         .floating-panel {
             display: none;
             position: absolute;
-            top: 65px; /* Se posiciona debajo de la barra superior para no Tapar los iconos */
+            top: 65px;
             right: 15px;
             z-index: 2500;
             background: rgba(255, 255, 255, 0.98);
@@ -242,7 +247,7 @@
             display: block !important;
         }
 
-        /* ENCABEZADO DE LA VENTANA (ÁREA DE ARRASTRE) */
+        /* ENCABEZADO DE LA VENTANA */
         .panel-header {
             background: #1D52A0;
             color: #ffffff;
@@ -405,7 +410,7 @@
                 </div>
             </div>
             
-            <!-- BARRA DE BOTONES CON ICONOS SVG DIRECTOS (GARANTIZA VISIBILIDAD) -->
+            <!-- BARRA DE BOTONES -->
             <div class="header-tools">
                 <button class="tool-btn" id="btnLayers" title="Capas de Información">
                     <svg viewBox="0 0 512 512"><path d="M12.41 216.14l182.89 104.38a64 64 0 0 0 61.4 0l182.89-104.38a24 24 0 0 0 0-41.82L256.7 69.94a64 64 0 0 0-61.4 0L12.41 174.32a24 24 0 0 0 0 41.82zM256 368a63.71 63.71 0 0 1-30.7-7.85l-132-75.3a16 16 0 0 0-23.86 14v48.63a32 32 0 0 0 16.57 28l153.29 87.52a64 64 0 0 0 61.4 0l153.29-87.52a32 32 0 0 0 16.57-28v-48.63a16 16 0 0 0-23.86-14l-132 75.3A63.71 63.71 0 0 1 256 368z"/></svg>
@@ -737,22 +742,45 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // LÓGICA DE DIBUJO
+        // LÓGICA DE DIBUJO CON CURSOR CAMBIANTE
         var currentDrawMode = null;
         var drawPoints = [];
         var activeTempShape = null;
 
+        function setCursorActive(active) {
+            var mapElem = document.getElementById('map');
+            if (active) {
+                mapElem.classList.add('drawing-active');
+            } else {
+                mapElem.classList.remove('drawing-active');
+            }
+        }
+
+        function updateActionBtnStyles(activeBtnId) {
+            document.querySelectorAll('.draw-options .action-btn, .measure-options .action-btn').forEach(btn => {
+                btn.classList.remove('active-action');
+            });
+            if (activeBtnId) {
+                var btn = document.getElementById(activeBtnId);
+                if (btn) btn.classList.add('active-action');
+            }
+        }
+
         function disableActiveModes() {
             currentDrawMode = null;
             drawPoints = [];
+            setCursorActive(false);
+            updateActionBtnStyles(null);
             if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
             map.off('click', handleMapClickDraw);
             map.off('click', handleMapClickMeasure);
         }
 
-        function setDrawMode(mode) {
+        function setDrawMode(mode, btnId) {
             disableActiveModes();
             currentDrawMode = mode;
+            setCursorActive(true);
+            updateActionBtnStyles(btnId);
             map.on('click', handleMapClickDraw);
         }
 
@@ -785,21 +813,23 @@
             }
         }
 
-        document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline'); };
-        document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle'); };
-        document.getElementById('drawCircle').onclick = function() { setDrawMode('circle'); };
-        document.getElementById('drawMarker').onclick = function() { setDrawMode('marker'); };
-        document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); };
+        document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline', 'drawPolyline'); };
+        document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle', 'drawRectangle'); };
+        document.getElementById('drawCircle').onclick = function() { setDrawMode('circle', 'drawCircle'); };
+        document.getElementById('drawMarker').onclick = function() { setDrawMode('marker', 'drawMarker'); };
+        document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
 
         // LÓGICA DE MEDICIÓN
         var measureMode = null;
         var measurePoints = [];
         var tempMeasureLine = null;
 
-        function setMeasureMode(mode) {
+        function setMeasureMode(mode, btnId) {
             disableActiveModes();
             measureMode = mode;
             measurePoints = [];
+            setCursorActive(true);
+            updateActionBtnStyles(btnId);
             document.getElementById('measureResult').innerText = 'Haz clic en el mapa para iniciar la medición.';
             map.on('click', handleMapClickMeasure);
         }
@@ -844,12 +874,13 @@
             return Math.abs(area);
         }
 
-        document.getElementById('measureDistance').onclick = function() { setMeasureMode('distance'); };
-        document.getElementById('measureArea').onclick = function() { setMeasureMode('area'); };
+        document.getElementById('measureDistance').onclick = function() { setMeasureMode('distance', 'measureDistance'); };
+        document.getElementById('measureArea').onclick = function() { setMeasureMode('area', 'measureArea'); };
         document.getElementById('clearMeasurement').onclick = function() {
             measureItems.clearLayers();
             measurePoints = [];
             document.getElementById('measureResult').innerText = 'Haz clic en una opción para medir en el mapa.';
+            disableActiveModes();
         };
         </script>
     </body>
