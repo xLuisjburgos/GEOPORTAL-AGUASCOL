@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=15.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=15.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=15.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=15.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=15.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=16.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=16.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=16.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=16.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=16.0">
         
         <style>
         html, body {
@@ -88,7 +88,7 @@
             font-weight: 600;
         }
 
-        /* BOTONES CIRCULARES DE HERRAMIENTAS */
+        /* BOTONES CIRCULARES DE HERRAMIENTAS EN LA BARRA SUPERIOR */
         .header-tools {
             display: flex;
             align-items: center;
@@ -96,31 +96,34 @@
         }
 
         .tool-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: #ffffff;
-            color: #1D52A0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            border: 1px solid #009EE2;
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            background-color: #ffffff !important;
+            color: #1D52A0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+            border: 1px solid #009EE2 !important;
+            padding: 0 !important;
+            outline: none !important;
         }
 
         .tool-btn:hover, .tool-btn.active-btn {
-            background-color: #009EE2;
-            color: #ffffff;
+            background-color: #009EE2 !important;
+            color: #ffffff !important;
             transform: translateY(-1px);
         }
 
         .tool-btn i {
-            font-size: 15px;
+            font-size: 16px !important;
+            pointer-events: none;
         }
 
-        /* 1. DESPLAZAMIENTO DE LA BARRA DE BÚSQUEDA */
+        /* BUSCADOR FLOTANTE EN EL MAPA */
         .search-container {
             position: absolute;
             top: 12px;
@@ -132,7 +135,7 @@
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             border: 1px solid #009EE2;
-            width: 250px;
+            width: 240px;
         }
 
         .search-box-inner {
@@ -215,14 +218,14 @@
             color: #ffffff !important;
         }
 
-        /* VENTANAS EMERGENTES FLOTANTES */
+        /* VENTANAS EMERGENTES FLOTANTES (PANEL DESPLEGABLE DE CADA OPCIÓN) */
         .floating-panel {
             display: none;
             position: absolute;
             top: 15px;
             right: 15px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.96);
+            z-index: 2500;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 10px;
@@ -234,7 +237,7 @@
         }
 
         .floating-panel.active {
-            display: block;
+            display: block !important;
         }
 
         .panel-header {
@@ -269,7 +272,6 @@
             font-weight: 700;
         }
 
-        /* 2. ICONOS EN LA SELECCIÓN DE CAPAS */
         .panel-body label {
             display: flex;
             align-items: center;
@@ -280,10 +282,9 @@
         }
 
         .layer-icon {
-            width: 14px;
+            width: 16px;
             text-align: center;
-            font-size: 12px;
-            margin-right: 2px;
+            font-size: 13px;
         }
 
         .panel-body input[type="checkbox"],
@@ -295,7 +296,7 @@
             cursor: pointer;
         }
 
-        /* 3 & 4. BOTONES Y ESTILOS DE DIBUJO Y MEDICIÓN */
+        /* BOTONES DE DIBUJO Y MEDICIÓN */
         .draw-options, .measure-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -397,7 +398,7 @@
                 </div>
             </div>
             
-            <!-- BARRA DE HERRAMIENTAS -->
+            <!-- BARRA DE BOTONES CON ICONOS -->
             <div class="header-tools">
                 <button class="tool-btn" id="btnLayers" title="Capas de Información">
                     <i class="fas fa-layer-group"></i>
@@ -418,7 +419,7 @@
         </div>
 
         <div id="map">
-            <!-- 1. BUSCADOR FLOTANTE DESPLAZADO -->
+            <!-- BUSCADOR FLOTANTE -->
             <div class="search-container">
                 <div class="search-box-inner">
                     <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
@@ -428,7 +429,7 @@
             </div>
         </div>
 
-        <!-- 2. PANEL DE CAPAS CON ICONOS -->
+        <!-- 1. VENTANA EMERGENTE DESPLEGABLE: CAPAS -->
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header">
                 <span>Capas de Información</span>
@@ -445,7 +446,7 @@
             </div>
         </div>
 
-        <!-- 3. PANEL DE DIBUJO -->
+        <!-- 2. VENTANA EMERGENTE DESPLEGABLE: DIBUJO -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header">
                 <span>Herramientas de Dibujo</span>
@@ -462,7 +463,7 @@
             </div>
         </div>
 
-        <!-- 4. PANEL DE MEDICIÓN -->
+        <!-- 3. VENTANA EMERGENTE DESPLEGABLE: MEDICIÓN -->
         <div class="floating-panel" id="panelMeasure">
             <div class="panel-header">
                 <span>Medición de Distancias</span>
@@ -478,7 +479,7 @@
             </div>
         </div>
 
-        <!-- PANEL DE LEYENDA -->
+        <!-- 4. VENTANA EMERGENTE DESPLEGABLE: LEYENDA -->
         <div class="floating-panel" id="panelLegend">
             <div class="panel-header">
                 <span>Leyenda</span>
@@ -495,7 +496,7 @@
             </div>
         </div>
 
-        <!-- PANEL DE MAPAS BASE -->
+        <!-- 5. VENTANA EMERGENTE DESPLEGABLE: MAPAS BASE -->
         <div class="floating-panel" id="panelBasemap">
             <div class="panel-header">
                 <span>Mapas Base</span>
@@ -566,7 +567,7 @@
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
 
-        // BÚSQUEDA
+        // MOTOR DE BÚSQUEDA
         var searchLayers = [
             { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
             { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
@@ -638,29 +639,33 @@
             }
         });
 
-        // CONTROL DE VENTANAS EMERGENTES
+        // CONTROL DE VENTANAS EMERGENTES (MODALES DESPLEGABLES)
         function closePanels() {
-            document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active-btn'));
+            var panels = document.querySelectorAll('.floating-panel');
+            var buttons = document.querySelectorAll('.tool-btn');
+            panels.forEach(function(p) { p.classList.remove('active'); });
+            buttons.forEach(function(b) { b.classList.remove('active-btn'); });
             disableActiveModes();
         }
 
         function togglePanel(panelId, btnId) {
             var panel = document.getElementById(panelId);
             var btn = document.getElementById(btnId);
-            var isCurrentActive = panel.classList.contains('active');
+            var isActive = panel.classList.contains('active');
+            
             closePanels();
-            if (!isCurrentActive) {
+            
+            if (!isActive) {
                 panel.classList.add('active');
                 if (btn) btn.classList.add('active-btn');
             }
         }
 
-        document.getElementById('btnLayers').onclick = function() { togglePanel('panelLayers', 'btnLayers'); };
-        document.getElementById('btnDraw').onclick = function() { togglePanel('panelDraw', 'btnDraw'); };
-        document.getElementById('btnMeasure').onclick = function() { togglePanel('panelMeasure', 'btnMeasure'); };
-        document.getElementById('btnLegend').onclick = function() { togglePanel('panelLegend', 'btnLegend'); };
-        document.getElementById('btnBasemap').onclick = function() { togglePanel('panelBasemap', 'btnBasemap'); };
+        document.getElementById('btnLayers').onclick = function(e) { e.stopPropagation(); togglePanel('panelLayers', 'btnLayers'); };
+        document.getElementById('btnDraw').onclick = function(e) { e.stopPropagation(); togglePanel('panelDraw', 'btnDraw'); };
+        document.getElementById('btnMeasure').onclick = function(e) { e.stopPropagation(); togglePanel('panelMeasure', 'btnMeasure'); };
+        document.getElementById('btnLegend').onclick = function(e) { e.stopPropagation(); togglePanel('panelLegend', 'btnLegend'); };
+        document.getElementById('btnBasemap').onclick = function(e) { e.stopPropagation(); togglePanel('panelBasemap', 'btnBasemap'); };
 
         // CHECKBOXES Y CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
@@ -674,7 +679,7 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // 3. LÓGICA DE DIBUJO DENTRO DEL MAPA
+        // LÓGICA DE DIBUJO
         var currentDrawMode = null;
         var drawPoints = [];
         var activeTempShape = null;
@@ -685,7 +690,6 @@
             if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
             map.off('click', handleMapClickDraw);
             map.off('click', handleMapClickMeasure);
-            map.off('mousemove', handleMapMoveMeasure);
         }
 
         function setDrawMode(mode) {
@@ -696,7 +700,7 @@
 
         function handleMapClickDraw(e) {
             if (currentDrawMode === 'marker') {
-                var marker = L.marker(e.latlng).addTo(drawnItems);
+                L.marker(e.latlng).addTo(drawnItems);
                 disableActiveModes();
             } else if (currentDrawMode === 'circle') {
                 if (drawPoints.length === 0) {
@@ -717,7 +721,6 @@
             } else if (currentDrawMode === 'polyline') {
                 drawPoints.push(e.latlng);
                 if (drawPoints.length > 1) {
-                    if (activeTempShape) map.removeLayer(activeTempShape);
                     L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
                     disableActiveModes();
                 }
@@ -730,7 +733,7 @@
         document.getElementById('drawMarker').onclick = function() { setDrawMode('marker'); };
         document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); };
 
-        // 4. LÓGICA DE MEDICIÓN DENTRO DEL MAPA
+        // LÓGICA DE MEDICIÓN
         var measureMode = null;
         var measurePoints = [];
         var tempMeasureLine = null;
@@ -761,7 +764,7 @@
                 if (measurePoints.length >= 3) {
                     if (tempMeasureLine) map.removeLayer(tempMeasureLine);
                     tempMeasureLine = L.polygon(measurePoints, { color: '#009EE2', fillColor: '#009EE2', fillOpacity: 0.3 }).addTo(measureItems);
-                    var area = L.GeometryUtil ? L.GeometryUtil.geodesicArea(measurePoints) : calculateApproxArea(measurePoints);
+                    var area = calculateApproxArea(measurePoints);
                     var areaStr = area > 10000 ? (area/10000).toFixed(2) + ' Ha' : area.toFixed(1) + ' m²';
                     document.getElementById('measureResult').innerText = 'Área calculada: ' + areaStr;
                 } else if (measurePoints.length > 1) {
@@ -769,8 +772,6 @@
                 }
             }
         }
-
-        function handleMapMoveMeasure(e) {}
 
         function calculateApproxArea(latLngs) {
             var pointsCount = latLngs.length, area = 0, d2r = Math.PI / 180, p1, p2;
