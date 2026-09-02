@@ -8,11 +8,13 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=24.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=24.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=24.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=24.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=24.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=25.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=25.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=25.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=25.0">
+        <!-- CDN de FontAwesome para garantizar que todos los iconos de dibujo carguen siempre -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=25.0">
         
         <!-- LEAFLET DRAW CSS Y JS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
@@ -281,7 +283,7 @@
             overflow-y: auto;
         }
 
-        /* BOTONES DE HERRAMIENTAS Y BARRA MODERNA DE DIBUJO */
+        /* BARRA DE BOTONES DE DIBUJO CON ICONOS VISIBLES */
         .draw-toolbar {
             display: flex;
             align-items: center;
@@ -297,11 +299,14 @@
             background: transparent;
             border: none;
             color: #1D52A0;
-            padding: 6px;
+            padding: 6px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .draw-btn-item:hover, .draw-btn-item.active-action {
@@ -329,7 +334,7 @@
             transition: all 0.2s;
         }
 
-        /* GRILLA DE MARCADORES / FORMAS */
+        /* GRILLA DE MARCADORES / FORMAS CON ICONOS CORREGIDOS */
         .shape-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -350,7 +355,7 @@
             padding: 6px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
             color: #334155;
             transition: background 0.2s;
         }
@@ -514,7 +519,7 @@
             </div>
         </div>
 
-        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO Y ESTILOS -->
+        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
                 <span>Dibujar</span>
@@ -523,10 +528,10 @@
             <div class="panel-body">
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Seleccionar modo de dibujo</span>
                 
-                <!-- BARRA DE HERRAMIENTAS DE DIBUJO -->
+                <!-- BARRA CON ICONOS 100% GARANTIZADOS -->
                 <div class="draw-toolbar">
-                    <button class="draw-btn-item" id="drawPointer" title="Puntero/Seleccionar"><i class="fas fa-mouse-pointer"></i></button>
-                    <button class="draw-btn-item" id="drawMarker" title="Punto"><i class="fas fa-map-marker-alt"></i></button>
+                    <button class="draw-btn-item" id="drawPointer" title="Puntero/Seleccionar"><i class="fas fa-location-arrow"></i></button>
+                    <button class="draw-btn-item" id="drawMarker" title="Punto"><i class="fas fa-map-pin"></i></button>
                     <button class="draw-btn-item" id="drawPolyline" title="Línea"><i class="fas fa-slash"></i></button>
                     <button class="draw-btn-item" id="drawPolygon" title="Polígono"><i class="fas fa-draw-polygon"></i></button>
                     <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><i class="far fa-square"></i></button>
@@ -546,23 +551,28 @@
                     </select>
                 </div>
 
-                <!-- SELECTOR DE FORMAS / PUNTOS -->
+                <!-- GRILLA DE MARCADORES -->
                 <div class="shape-grid" id="shapeGrid">
-                    <div class="shape-item selected" data-shape="circle"><i class="fas fa-circle" style="color: #000;"></i></div>
-                    <div class="shape-item" data-shape="rhombus"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #000;"></i></div>
-                    <div class="shape-item" data-shape="marker"><i class="fas fa-map-pin" style="color: #000;"></i></div>
-                    <div class="shape-item" data-shape="square"><i class="fas fa-square" style="color: #000;"></i></div>
-                    <div class="shape-item" data-shape="star"><i class="fas fa-star" style="color: #000;"></i></div>
+                    <div class="shape-item selected" data-shape="circle"><i class="fas fa-circle" style="color: #000000;"></i></div>
+                    <div class="shape-item" data-shape="rhombus"><i class="fas fa-square" style="transform: rotate(45deg); color: #000000;"></i></div>
+                    <div class="shape-item" data-shape="marker"><i class="fas fa-map-pin" style="color: #000000;"></i></div>
+                    <div class="shape-item" data-shape="square"><i class="fas fa-square" style="color: #000000;"></i></div>
+                    <div class="shape-item" data-shape="star"><i class="fas fa-star" style="color: #000000;"></i></div>
+                    <div class="shape-item" data-shape="bookmark"><i class="fas fa-bookmark" style="color: #000000;"></i></div>
+
                     <div class="shape-item" data-shape="circle-blue"><i class="fas fa-circle" style="color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="rhombus-blue"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="rhombus-blue"><i class="fas fa-square" style="transform: rotate(45deg); color: #009ee2;"></i></div>
                     <div class="shape-item" data-shape="marker-blue"><i class="fas fa-map-pin" style="color: #009ee2;"></i></div>
                     <div class="shape-item" data-shape="square-blue"><i class="fas fa-square" style="color: #009ee2;"></i></div>
                     <div class="shape-item" data-shape="star-blue"><i class="fas fa-star" style="color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="bookmark-blue"><i class="fas fa-bookmark" style="color: #009ee2;"></i></div>
+
                     <div class="shape-item" data-shape="circle-green"><i class="fas fa-circle" style="color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="rhombus-green"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="rhombus-green"><i class="fas fa-square" style="transform: rotate(45deg); color: #2ecc71;"></i></div>
                     <div class="shape-item" data-shape="marker-green"><i class="fas fa-map-pin" style="color: #2ecc71;"></i></div>
                     <div class="shape-item" data-shape="square-green"><i class="fas fa-square" style="color: #2ecc71;"></i></div>
                     <div class="shape-item" data-shape="star-green"><i class="fas fa-star" style="color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="bookmark-green"><i class="fas fa-bookmark" style="color: #2ecc71;"></i></div>
                 </div>
 
                 <!-- CONTROLES DE TAMAÑO Y COLORES -->
@@ -594,14 +604,14 @@
                 </div>
 
                 <div class="toggle-switch">
-                    <span>Mostrar medición de ubicación</span>
+                    <span>Mostrar ubicación al hacer clic</span>
                     <label class="switch">
                         <input type="checkbox" id="chkLocationMeasure">
                         <span class="slider"></span>
                     </label>
                 </div>
 
-                <button class="btn-danger" id="btnClearAll"><i class="fas fa-trash"></i> Limpiar todo</button>
+                <button class="btn-danger" id="btnClearAll"><i class="fas fa-trash-alt"></i> Limpiar todo</button>
             </div>
         </div>
 
@@ -615,7 +625,7 @@
                 <div class="measure-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-ruler"></i> Distancia</button>
                     <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-draw-polygon"></i> Área</button>
-                    <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;"><i class="fas fa-trash"></i> Reiniciar</button>
+                    <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;"><i class="fas fa-trash-alt"></i> Reiniciar</button>
                 </div>
                 <div class="measure-result" id="measureResult" style="background:#f1f5f9; padding:8px; border-radius:6px; margin-top:10px; text-align:center;">Haz clic en una opción para medir en el mapa.</div>
             </div>
@@ -871,7 +881,6 @@
         var currentDrawer = null;
         var selectedShape = 'circle';
 
-        // ELEMENTOS DE INTERFAZ DE PERSONALIZACIÓN
         var sizeInput = document.getElementById('sizeInput');
         var fillColorInput = document.getElementById('fillColorInput');
         var borderColorInput = document.getElementById('borderColorInput');
@@ -910,14 +919,12 @@
         borderWidthInput.addEventListener('input', updatePreview);
         opacitySlider.addEventListener('input', updatePreview);
 
-        // SELECCIÓN DE MARCADORES / FORMAS DE LA GRILLA
         document.querySelectorAll('.shape-item').forEach(item => {
             item.addEventListener('click', function() {
                 document.querySelectorAll('.shape-item').forEach(i => i.classList.remove('selected'));
                 this.classList.add('selected');
                 selectedShape = this.dataset.shape;
                 
-                // Extraer color rápido de la grilla si aplica
                 if (selectedShape.includes('blue')) { fillColorInput.value = '#009ee2'; }
                 else if (selectedShape.includes('green')) { fillColorInput.value = '#2ecc71'; }
                 
@@ -969,7 +976,6 @@
             } else if (drawType === 'polygon') {
                 currentDrawer = new L.Draw.Polygon(map, options);
             } else if (drawType === 'marker') {
-                // Generar icono personalizado dinámico para el punto
                 var iconHtml = `<div style="width:${sizeInput.value}px; height:${sizeInput.value}px; background:${fillColorInput.value}; border:${borderWidthInput.value}px solid ${borderColorInput.value}; border-radius:50%; opacity:${opacitySlider.value/100};"></div>`;
                 var customIcon = L.divIcon({
                     html: iconHtml,
@@ -987,7 +993,6 @@
         map.on(L.Draw.Event.CREATED, function (e) {
             var layer = e.layer;
             
-            // Si el objeto dibuja ubicación y está activo el switch
             if (document.getElementById('chkLocationMeasure').checked && layer.getLatLng) {
                 var latlng = layer.getLatLng();
                 layer.bindPopup(`<b>Ubicación:</b><br>Lat: ${latlng.lat.toFixed(5)}<br>Lng: ${latlng.lng.toFixed(5)}`).openPopup();
@@ -1074,7 +1079,6 @@
             disableActiveModes();
         };
 
-        // Inicializar vista previa al cargar
         updatePreview();
         </script>
     </body>
