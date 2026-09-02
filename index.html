@@ -7,10 +7,10 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=33.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=33.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=33.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=33.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=34.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=34.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=34.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=34.0">
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
@@ -822,8 +822,40 @@
         });
         map.addControl(drawControl);
 
-        function createPopFunction() {
+        // CONTROL DE RESALTE (SELECCIÓN DE POLÍGONOS)
+        var selectedLayer = null;
+
+        function highlightFeature(e) {
+            var layer = e.target;
+
+            // Restablece el estilo del polígono seleccionado anteriormente
+            if (selectedLayer && selectedLayer !== layer) {
+                if (selectedLayer.parentGeoJsonLayer) {
+                    selectedLayer.parentGeoJsonLayer.resetStyle(selectedLayer);
+                }
+            }
+
+            // Aplica el nuevo estilo azul #00f8ff con 50% de opacidad
+            layer.setStyle({
+                fillColor: '#00f8ff',
+                fillOpacity: 0.5,
+                color: '#00f8ff',
+                weight: 3
+            });
+
+            selectedLayer = layer;
+
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                layer.bringToFront();
+            }
+        }
+
+        function createPopFunction(parentLayer) {
             return function pop_Feature(feature, layer) {
+                if (parentLayer) {
+                    layer.parentGeoJsonLayer = parentLayer;
+                }
+
                 var popupContent = '<table>';
                 for (var prop in feature.properties) {
                     if (feature.properties[prop] !== null) {
@@ -832,8 +864,20 @@
                 }
                 popupContent += '</table>';
                 layer.bindPopup(popupContent, { maxHeight: 400 });
+
+                layer.on({
+                    click: highlightFeature
+                });
             };
         }
+
+        // Restablece el estilo al cerrar la ventana emergente
+        map.on('popupclose', function() {
+            if (selectedLayer && selectedLayer.parentGeoJsonLayer) {
+                selectedLayer.parentGeoJsonLayer.resetStyle(selectedLayer);
+                selectedLayer = null;
+            }
+        });
 
         var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { minZoom: 1, maxZoom: 28 });
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
@@ -851,13 +895,26 @@
             fillOpacity: 0.0
         };
 
-        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } });
-        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } });
-        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } });
-        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } });
-        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } });
-        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } });
-        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return style_CUENCAS; } });
+        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } });
+        layer_DRENAJESCACUASIA_2.eachLayer(function(l) { createPopFunction(layer_DRENAJESCACUASIA_2)(l.feature, l); });
+
+        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } });
+        layer_LAGUNASCAUCASIA_3.eachLayer(function(l) { createPopFunction(layer_LAGUNASCAUCASIA_3)(l.feature, l); });
+
+        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } });
+        layer_CIENAGASCAUCASIA_4.eachLayer(function(l) { createPopFunction(layer_CIENAGASCAUCASIA_4)(l.feature, l); });
+
+        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } });
+        layer_RIOCAUCA_5.eachLayer(function(l) { createPopFunction(layer_RIOCAUCA_5)(l.feature, l); });
+
+        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } });
+        layer_PANTANOSCAUCASIA_6.eachLayer(function(l) { createPopFunction(layer_PANTANOSCAUCASIA_6)(l.feature, l); });
+
+        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } });
+        layer_BARRIOSCAUCASIA_7.eachLayer(function(l) { createPopFunction(layer_BARRIOSCAUCASIA_7)(l.feature, l); });
+
+        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { style: function() { return style_CUENCAS; } });
+        layer_CUENCASALCANTARILLADO_8.eachLayer(function(l) { createPopFunction(layer_CUENCASALCANTARILLADO_8)(l.feature, l); });
 
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
@@ -907,6 +964,7 @@
                         } else if (targetLayer.getLatLng) {
                             map.setView(targetLayer.getLatLng(), 17);
                         }
+                        targetLayer.fire('click');
                         targetLayer.openPopup();
                         searchResults.style.display = 'none';
                         searchInput.value = '';
