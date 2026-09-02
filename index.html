@@ -7,23 +7,26 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=28.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=28.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=28.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=28.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=29.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=29.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=29.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=29.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=28.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=29.0">
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
         <style>
+        * {
+            font-family: 'Gill Sans MT', 'Gill Sans', Calibri, 'Trebuchet MS', sans-serif !important;
+        }
+
         html, body {
             width: 100% !important;
             height: 100% !important;
             padding: 0 !important;
             margin: 0 !important;
             overflow: hidden !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             background-color: #f8f9fa;
         }
 
@@ -294,7 +297,6 @@
             color: #ffffff;
         }
 
-        /* PREVISUALIZACIÓN Y CLASES PARTICULARES */
         .preview-box {
             display: flex;
             align-items: center;
@@ -520,13 +522,13 @@
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
             <div class="panel-body">
-                <label><input type="checkbox" id="chkCuencas" checked> <i class="fas fa-project-diagram layer-icon" style="color: #e31a1c;"></i> CUENCAS ALCANTARILLADO</label>
-                <label><input type="checkbox" id="chkBarrios" checked> <i class="fas fa-city layer-icon" style="color: #232323;"></i> BARRIOS</label>
-                <label><input type="checkbox" id="chkPantanos" checked> <i class="fas fa-tree layer-icon" style="color: #987db7;"></i> PANTANOS</label>
-                <label><input type="checkbox" id="chkRio" checked> <i class="fas fa-water layer-icon" style="color: #b89b6b;"></i> RÍO CAUCA</label>
-                <label><input type="checkbox" id="chkCienagas" checked> <i class="fas fa-tint layer-icon" style="color: #ff8b12;"></i> CIÉNAGAS</label>
-                <label><input type="checkbox" id="chkLagunas" checked> <i class="fas fa-water layer-icon" style="color: #729f6f;"></i> LAGUNAS</label>
-                <label><input type="checkbox" id="chkDrenajes" checked> <i class="fas fa-route layer-icon" style="color: #009ee2;"></i> DRENAJES</label>
+                <label><input type="checkbox" id="chkCuencas"> <i class="fas fa-project-diagram layer-icon" style="color: #e31a1c;"></i> CUENCAS ALCANTARILLADO</label>
+                <label><input type="checkbox" id="chkBarrios"> <i class="fas fa-city layer-icon" style="color: #232323;"></i> BARRIOS</label>
+                <label><input type="checkbox" id="chkPantanos"> <i class="fas fa-tree layer-icon" style="color: #987db7;"></i> PANTANOS</label>
+                <label><input type="checkbox" id="chkRio"> <i class="fas fa-water layer-icon" style="color: #b89b6b;"></i> RÍO CAUCA</label>
+                <label><input type="checkbox" id="chkCienagas"> <i class="fas fa-tint layer-icon" style="color: #ff8b12;"></i> CIÉNAGAS</label>
+                <label><input type="checkbox" id="chkLagunas"> <i class="fas fa-water layer-icon" style="color: #729f6f;"></i> LAGUNAS</label>
+                <label><input type="checkbox" id="chkDrenajes"> <i class="fas fa-route layer-icon" style="color: #009ee2;"></i> DRENAJES</label>
             </div>
         </div>
 
@@ -562,6 +564,7 @@
                 <div class="config-row" style="justify-content: space-between;" id="fontSelectRow">
                     <span>Fuente:</span>
                     <select id="fontSelect" style="width: 140px;">
+                        <option value="'Gill Sans MT', 'Gill Sans', sans-serif">Gill Sans MT</option>
                         <option value="Arial, sans-serif">Arial Regular</option>
                         <option value="'Courier New', monospace">Courier</option>
                         <option value="'Times New Roman', serif">Times New Roman</option>
@@ -715,13 +718,14 @@
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
         map.addLayer(layer_GoogleSatellite_1);
 
-        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } }).addTo(map);
-        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
-        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
-        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
-        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
-        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } }).addTo(map);
-        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; } }).addTo(map);
+        // INSTANCIACIÓN DE CAPAS SIN AÑADIR AL MAPA POR DEFECTO
+        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } });
+        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } });
+        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } });
+        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } });
+        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } });
+        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } });
+        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; } });
 
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
@@ -862,6 +866,7 @@
         makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
         makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
 
+        // EVENTOS ENCIENDE/APAGA CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
         document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
         document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
@@ -873,9 +878,9 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // SISTEMA MULTI-PREVISUALIZACIÓN CON MODO TEXTO Y CÍRCULO
+        // DIBUJO Y PREVISUALIZACIÓN
         var currentDrawer = null;
-        var currentGeometryMode = 'marker'; // 'marker', 'polyline', 'polygon', 'circle', 'text'
+        var currentGeometryMode = 'marker';
 
         var sizeInput = document.getElementById('sizeInput');
         var sizeLabel = document.getElementById('sizeLabel');
@@ -1182,7 +1187,7 @@
         document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
         document.getElementById('btnClearAll').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
 
-        // LÓGICA DE MEDICIÓN
+        // MEDICIÓN
         var measureMode = null;
         var measurePoints = [];
         var tempMeasureLine = null;
