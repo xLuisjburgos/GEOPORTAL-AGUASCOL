@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=14.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=14.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=14.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=14.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=14.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=15.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=15.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=15.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=15.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=15.0">
         
         <style>
         html, body {
@@ -110,7 +110,7 @@
             border: 1px solid #009EE2;
         }
 
-        .tool-btn:hover {
+        .tool-btn:hover, .tool-btn.active-btn {
             background-color: #009EE2;
             color: #ffffff;
             transform: translateY(-1px);
@@ -120,11 +120,11 @@
             font-size: 15px;
         }
 
-        /* BUSCADOR FLOTANTE EN EL MAPA CON AUTOCOMPLETADO */
+        /* 1. DESPLAZAMIENTO DE LA BARRA DE BÚSQUEDA */
         .search-container {
             position: absolute;
-            top: 15px;
-            left: 60px;
+            top: 12px;
+            left: 65px;
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -132,7 +132,7 @@
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             border: 1px solid #009EE2;
-            width: 240px;
+            width: 250px;
         }
 
         .search-box-inner {
@@ -165,7 +165,6 @@
             background: #009EE2;
         }
 
-        /* LISTA DE RESULTADOS DEL BUSCADOR */
         .search-results-list {
             display: none;
             max-height: 180px;
@@ -194,8 +193,8 @@
 
         /* CONTROL DE ZOOM */
         .leaflet-top.leaflet-left {
-            top: 15px !important;
-            left: 15px !important;
+            top: 12px !important;
+            left: 12px !important;
         }
 
         .leaflet-bar {
@@ -229,7 +228,7 @@
             border-radius: 10px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             border: 1px solid rgba(29, 82, 160, 0.3);
-            width: 260px;
+            width: 270px;
             max-height: 75vh;
             overflow-y: auto;
         }
@@ -270,21 +269,81 @@
             font-weight: 700;
         }
 
+        /* 2. ICONOS EN LA SELECCIÓN DE CAPAS */
         .panel-body label {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             cursor: pointer;
             text-transform: uppercase;
+            gap: 6px;
+        }
+
+        .layer-icon {
+            width: 14px;
+            text-align: center;
+            font-size: 12px;
+            margin-right: 2px;
         }
 
         .panel-body input[type="checkbox"],
         .panel-body input[type="radio"] {
             accent-color: #009EE2;
-            width: 16px;
-            height: 16px;
-            margin-right: 8px;
+            width: 15px;
+            height: 15px;
+            margin-right: 4px;
             cursor: pointer;
+        }
+
+        /* 3 & 4. BOTONES Y ESTILOS DE DIBUJO Y MEDICIÓN */
+        .draw-options, .measure-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            background: #ffffff;
+            border: 1px solid #009EE2;
+            color: #1D52A0;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover, .action-btn.active-action {
+            background: #009EE2;
+            color: #ffffff;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            grid-column: span 2;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .measure-result {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #1e293b;
+            text-align: center;
         }
 
         /* LEYENDA */
@@ -338,9 +397,16 @@
                 </div>
             </div>
             
+            <!-- BARRA DE HERRAMIENTAS -->
             <div class="header-tools">
                 <button class="tool-btn" id="btnLayers" title="Capas de Información">
                     <i class="fas fa-layer-group"></i>
+                </button>
+                <button class="tool-btn" id="btnDraw" title="Herramientas de Dibujo">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="tool-btn" id="btnMeasure" title="Regla de Medición">
+                    <i class="fas fa-ruler-combined"></i>
                 </button>
                 <button class="tool-btn" id="btnLegend" title="Leyenda">
                     <i class="fas fa-list-ul"></i>
@@ -352,7 +418,7 @@
         </div>
 
         <div id="map">
-            <!-- BUSCADOR FLOTANTE CON RESULTADOS -->
+            <!-- 1. BUSCADOR FLOTANTE DESPLAZADO -->
             <div class="search-container">
                 <div class="search-box-inner">
                     <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
@@ -362,20 +428,53 @@
             </div>
         </div>
 
-        <!-- PANEL DE CAPAS -->
+        <!-- 2. PANEL DE CAPAS CON ICONOS -->
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header">
                 <span>Capas de Información</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
             <div class="panel-body">
-                <label><input type="checkbox" id="chkCuencas" checked> CUENCAS ALCANTARILLADO</label>
-                <label><input type="checkbox" id="chkBarrios" checked> BARRIOS</label>
-                <label><input type="checkbox" id="chkPantanos" checked> PANTANOS</label>
-                <label><input type="checkbox" id="chkRio" checked> RÍO CAUCA</label>
-                <label><input type="checkbox" id="chkCienagas" checked> CIÉNAGAS</label>
-                <label><input type="checkbox" id="chkLagunas" checked> LAGUNAS</label>
-                <label><input type="checkbox" id="chkDrenajes" checked> DRENAJES</label>
+                <label><input type="checkbox" id="chkCuencas" checked> <i class="fas fa-project-diagram layer-icon" style="color: #e31a1c;"></i> CUENCAS ALCANTARILLADO</label>
+                <label><input type="checkbox" id="chkBarrios" checked> <i class="fas fa-city layer-icon" style="color: #232323;"></i> BARRIOS</label>
+                <label><input type="checkbox" id="chkPantanos" checked> <i class="fas fa-tree layer-icon" style="color: #987db7;"></i> PANTANOS</label>
+                <label><input type="checkbox" id="chkRio" checked> <i class="fas fa-water layer-icon" style="color: #b89b6b;"></i> RÍO CAUCA</label>
+                <label><input type="checkbox" id="chkCienagas" checked> <i class="fas fa-tint layer-icon" style="color: #ff8b12;"></i> CIÉNAGAS</label>
+                <label><input type="checkbox" id="chkLagunas" checked> <i class="fas fa-water layer-icon" style="color: #729f6f;"></i> LAGUNAS</label>
+                <label><input type="checkbox" id="chkDrenajes" checked> <i class="fas fa-route layer-icon" style="color: #009ee2;"></i> DRENAJES</label>
+            </div>
+        </div>
+
+        <!-- 3. PANEL DE DIBUJO -->
+        <div class="floating-panel" id="panelDraw">
+            <div class="panel-header">
+                <span>Herramientas de Dibujo</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <div class="draw-options">
+                    <button class="action-btn" id="drawPolyline"><i class="fas fa-slash"></i> Línea</button>
+                    <button class="action-btn" id="drawRectangle"><i class="far fa-square"></i> Cuadrado</button>
+                    <button class="action-btn" id="drawCircle"><i class="far fa-circle"></i> Círculo</button>
+                    <button class="action-btn" id="drawMarker"><i class="fas fa-map-marker-alt"></i> Punto</button>
+                    <button class="action-btn btn-danger" id="clearDrawings"><i class="fas fa-trash"></i> Limpiar Dibujos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. PANEL DE MEDICIÓN -->
+        <div class="floating-panel" id="panelMeasure">
+            <div class="panel-header">
+                <span>Medición de Distancias</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <div class="measure-options">
+                    <button class="action-btn" id="measureDistance"><i class="fas fa-ruler"></i> Distancia</button>
+                    <button class="action-btn" id="measureArea"><i class="fas fa-draw-polygon"></i> Área</button>
+                    <button class="action-btn btn-danger" id="clearMeasurement"><i class="fas fa-trash"></i> Reiniciar</button>
+                </div>
+                <div class="measure-result" id="measureResult">Haz clic en una opción para medir en el mapa.</div>
             </div>
         </div>
 
@@ -433,6 +532,8 @@
         var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
 
         var bounds_group = new L.featureGroup([]);
+        var drawnItems = new L.FeatureGroup().addTo(map);
+        var measureItems = new L.FeatureGroup().addTo(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
 
         function createPopFunction() {
@@ -465,14 +566,13 @@
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
 
-        // LISTA DE CAPAS VECTORIALES PARA BUSCAR
+        // BÚSQUEDA
         var searchLayers = [
             { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
             { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
             { layer: layer_DRENAJESCACUASIA_2, name: 'DRENAJES' }
         ];
 
-        // MOTOR DE BÚSQUEDA
         var searchInput = document.getElementById('searchInput');
         var searchResults = document.getElementById('searchResults');
 
@@ -530,38 +630,39 @@
             }
         }
 
-        searchInput.addEventListener('input', function() {
-            executeSearch(this.value);
-        });
-
-        document.getElementById('searchBtn').onclick = function() {
-            executeSearch(searchInput.value);
-        };
-
-        // OCULTAR RESULTADOS AL HACER CLIC FUERA
+        searchInput.addEventListener('input', function() { executeSearch(this.value); });
+        document.getElementById('searchBtn').onclick = function() { executeSearch(searchInput.value); };
         document.addEventListener('click', function(e) {
             if (!document.querySelector('.search-container').contains(e.target)) {
                 searchResults.style.display = 'none';
             }
         });
 
-        // CONTROL DE VENTANAS EMERGENTES (MODALES)
+        // CONTROL DE VENTANAS EMERGENTES
         function closePanels() {
             document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active-btn'));
+            disableActiveModes();
         }
 
-        function togglePanel(panelId) {
+        function togglePanel(panelId, btnId) {
             var panel = document.getElementById(panelId);
+            var btn = document.getElementById(btnId);
             var isCurrentActive = panel.classList.contains('active');
             closePanels();
-            if (!isCurrentActive) { panel.classList.add('active'); }
+            if (!isCurrentActive) {
+                panel.classList.add('active');
+                if (btn) btn.classList.add('active-btn');
+            }
         }
 
-        document.getElementById('btnLayers').onclick = function() { togglePanel('panelLayers'); };
-        document.getElementById('btnLegend').onclick = function() { togglePanel('panelLegend'); };
-        document.getElementById('btnBasemap').onclick = function() { togglePanel('panelBasemap'); };
+        document.getElementById('btnLayers').onclick = function() { togglePanel('panelLayers', 'btnLayers'); };
+        document.getElementById('btnDraw').onclick = function() { togglePanel('panelDraw', 'btnDraw'); };
+        document.getElementById('btnMeasure').onclick = function() { togglePanel('panelMeasure', 'btnMeasure'); };
+        document.getElementById('btnLegend').onclick = function() { togglePanel('panelLegend', 'btnLegend'); };
+        document.getElementById('btnBasemap').onclick = function() { togglePanel('panelBasemap', 'btnBasemap'); };
 
-        // VINCULACIÓN DE CHECKBOXES CON CAPAS
+        // CHECKBOXES Y CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
         document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
         document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
@@ -570,9 +671,127 @@
         document.getElementById('chkLagunas').onchange = function() { this.checked ? map.addLayer(layer_LAGUNASCAUCASIA_3) : map.removeLayer(layer_LAGUNASCAUCASIA_3); };
         document.getElementById('chkDrenajes').onchange = function() { this.checked ? map.addLayer(layer_DRENAJESCACUASIA_2) : map.removeLayer(layer_DRENAJESCACUASIA_2); };
 
-        // VINCULACIÓN DE MAPAS BASE
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
+
+        // 3. LÓGICA DE DIBUJO DENTRO DEL MAPA
+        var currentDrawMode = null;
+        var drawPoints = [];
+        var activeTempShape = null;
+
+        function disableActiveModes() {
+            currentDrawMode = null;
+            drawPoints = [];
+            if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
+            map.off('click', handleMapClickDraw);
+            map.off('click', handleMapClickMeasure);
+            map.off('mousemove', handleMapMoveMeasure);
+        }
+
+        function setDrawMode(mode) {
+            disableActiveModes();
+            currentDrawMode = mode;
+            map.on('click', handleMapClickDraw);
+        }
+
+        function handleMapClickDraw(e) {
+            if (currentDrawMode === 'marker') {
+                var marker = L.marker(e.latlng).addTo(drawnItems);
+                disableActiveModes();
+            } else if (currentDrawMode === 'circle') {
+                if (drawPoints.length === 0) {
+                    drawPoints.push(e.latlng);
+                } else {
+                    var radius = drawPoints[0].distanceTo(e.latlng);
+                    L.circle(drawPoints[0], { radius: radius, color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    disableActiveModes();
+                }
+            } else if (currentDrawMode === 'rectangle') {
+                if (drawPoints.length === 0) {
+                    drawPoints.push(e.latlng);
+                } else {
+                    var bounds = L.latLngBounds(drawPoints[0], e.latlng);
+                    L.rectangle(bounds, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    disableActiveModes();
+                }
+            } else if (currentDrawMode === 'polyline') {
+                drawPoints.push(e.latlng);
+                if (drawPoints.length > 1) {
+                    if (activeTempShape) map.removeLayer(activeTempShape);
+                    L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    disableActiveModes();
+                }
+            }
+        }
+
+        document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline'); };
+        document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle'); };
+        document.getElementById('drawCircle').onclick = function() { setDrawMode('circle'); };
+        document.getElementById('drawMarker').onclick = function() { setDrawMode('marker'); };
+        document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); };
+
+        // 4. LÓGICA DE MEDICIÓN DENTRO DEL MAPA
+        var measureMode = null;
+        var measurePoints = [];
+        var tempMeasureLine = null;
+
+        function setMeasureMode(mode) {
+            disableActiveModes();
+            measureMode = mode;
+            measurePoints = [];
+            document.getElementById('measureResult').innerText = 'Haz clic en el mapa para iniciar la medición.';
+            map.on('click', handleMapClickMeasure);
+        }
+
+        function handleMapClickMeasure(e) {
+            measurePoints.push(e.latlng);
+            L.circleMarker(e.latlng, { radius: 4, color: '#009EE2' }).addTo(measureItems);
+
+            if (measureMode === 'distance') {
+                if (measurePoints.length > 1) {
+                    var totalDist = 0;
+                    for (var i = 0; i < measurePoints.length - 1; i++) {
+                        totalDist += measurePoints[i].distanceTo(measurePoints[i+1]);
+                    }
+                    L.polyline(measurePoints, { color: '#009EE2', weight: 3, dashArray: '5, 10' }).addTo(measureItems);
+                    var distStr = totalDist > 1000 ? (totalDist/1000).toFixed(2) + ' km' : totalDist.toFixed(1) + ' m';
+                    document.getElementById('measureResult').innerText = 'Distancia total: ' + distStr;
+                }
+            } else if (measureMode === 'area') {
+                if (measurePoints.length >= 3) {
+                    if (tempMeasureLine) map.removeLayer(tempMeasureLine);
+                    tempMeasureLine = L.polygon(measurePoints, { color: '#009EE2', fillColor: '#009EE2', fillOpacity: 0.3 }).addTo(measureItems);
+                    var area = L.GeometryUtil ? L.GeometryUtil.geodesicArea(measurePoints) : calculateApproxArea(measurePoints);
+                    var areaStr = area > 10000 ? (area/10000).toFixed(2) + ' Ha' : area.toFixed(1) + ' m²';
+                    document.getElementById('measureResult').innerText = 'Área calculada: ' + areaStr;
+                } else if (measurePoints.length > 1) {
+                    L.polyline(measurePoints, { color: '#009EE2', weight: 2 }).addTo(measureItems);
+                }
+            }
+        }
+
+        function handleMapMoveMeasure(e) {}
+
+        function calculateApproxArea(latLngs) {
+            var pointsCount = latLngs.length, area = 0, d2r = Math.PI / 180, p1, p2;
+            if (pointsCount > 2) {
+                for (var i = 0; i < pointsCount; i++) {
+                    p1 = latLngs[i];
+                    p2 = latLngs[(i + 1) % pointsCount];
+                    area += ((p2.lng - p1.lng) * d2r) * (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
+                }
+                area = area * 6378137.0 * 6378137.0 / 2.0;
+            }
+            return Math.abs(area);
+        }
+
+        document.getElementById('measureDistance').onclick = function() { setMeasureMode('distance'); };
+        document.getElementById('measureArea').onclick = function() { setMeasureMode('area'); };
+        document.getElementById('clearMeasurement').onclick = function() {
+            measureItems.clearLayers();
+            measurePoints = [];
+            document.getElementById('measureResult').innerText = 'Haz clic en una opción para medir en el mapa.';
+        };
         </script>
     </body>
 </html>
