@@ -7,10 +7,10 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=30.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=30.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=30.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=30.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=31.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=31.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=31.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=31.0">
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
@@ -217,12 +217,10 @@
             top: 65px;
             right: 15px;
             z-index: 2500;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 10px;
+            background: #ffffff;
+            border-radius: 6px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            border: 1px solid rgba(29, 82, 160, 0.3);
+            border: 1px solid rgba(0,0,0,0.15);
             width: 320px;
             max-height: 80vh;
             overflow: hidden;
@@ -232,40 +230,111 @@
             display: block !important;
         }
 
-        .panel-header {
-            background: #1D52A0;
+        .panel-header-green {
+            background: #2e8b22;
             color: #ffffff;
-            padding: 10px 14px;
-            font-size: 12px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #009EE2;
             cursor: move;
             user-select: none;
         }
 
-        .panel-close {
+        .panel-close-btn {
             cursor: pointer;
             color: #ffffff;
             font-size: 14px;
-            transition: color 0.2s;
             font-weight: bold;
         }
 
-        .panel-close:hover {
-            color: #009EE2;
+        .panel-close-btn:hover {
+            opacity: 0.8;
         }
 
-        .panel-body {
+        /* DISEÑO ESPECÍFICO LISTADO DE CAPAS (IMAGEN DE REFERENCIA) */
+        .layer-list-container {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .layer-item-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #ffffff;
+        }
+
+        .drag-dots {
+            color: #888;
+            font-size: 14px;
+            letter-spacing: -1px;
+            margin-right: 12px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid #2e8b22;
+            border-radius: 2px;
+            margin-right: 12px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            background: #fff;
+        }
+
+        .custom-checkbox:checked {
+            background-color: #2e8b22;
+        }
+
+        .custom-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 11px;
+            top: -2px;
+            left: 2px;
+            font-weight: bold;
+        }
+
+        .layer-title-text {
+            flex: 1;
+            font-size: 12px;
+            color: #333333;
+            font-weight: 500;
+        }
+
+        .layer-row-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #777777;
+            font-size: 12px;
+        }
+
+        .layer-row-actions span {
+            cursor: pointer;
+        }
+
+        .layer-row-actions span:hover {
+            color: #1D52A0;
+        }
+
+        .panel-body-std {
             padding: 12px 14px;
             color: #1D52A0;
             font-size: 11px;
             font-weight: 700;
-            max-height: calc(80vh - 45px);
+            max-height: calc(80vh - 40px);
             overflow-y: auto;
         }
 
@@ -430,7 +499,7 @@
 
         .slider-container input[type="range"] {
             flex: 1;
-            accent-color: #009EE2;
+            accent-color: #2e8b22;
         }
 
         .toggle-switch {
@@ -470,7 +539,7 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider { background-color: #009EE2; }
+        input:checked + .slider { background-color: #2e8b22; }
         input:checked + .slider:before { transform: translateX(16px); }
 
         .btn-danger {
@@ -533,27 +602,62 @@
         </div>
 
         <div class="floating-panel" id="panelLayers">
-            <div class="panel-header" id="panelLayersHeader">
-                <span>Capas de Información</span>
-                <span class="panel-close" onclick="closePanels()">✕</span>
+            <div class="panel-header-green" id="panelLayersHeader">
+                <span>Capas del mapa</span>
+                <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
-            <div class="panel-body">
-                <label><input type="checkbox" id="chkCuencas"> CUENCAS ALCANTARILLADO</label>
-                <label><input type="checkbox" id="chkBarrios"> BARRIOS</label>
-                <label><input type="checkbox" id="chkPantanos"> PANTANOS</label>
-                <label><input type="checkbox" id="chkRio"> RÍO CAUCA</label>
-                <label><input type="checkbox" id="chkCienagas"> CIÉNAGAS</label>
-                <label><input type="checkbox" id="chkLagunas"> LAGUNAS</label>
-                <label><input type="checkbox" id="chkDrenajes"> DRENAJES</label>
-            </div>
+            <ul class="layer-list-container">
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkCuencas">
+                    <span class="layer-title-text">Cuencas alcantarillado</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkBarrios">
+                    <span class="layer-title-text">Barrios</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkPantanos">
+                    <span class="layer-title-text">Pantanos</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkRio">
+                    <span class="layer-title-text">Río cauca</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkCienagas">
+                    <span class="layer-title-text">Ciénagas</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkLagunas">
+                    <span class="layer-title-text">Lagunas</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+                <li class="layer-item-row">
+                    <span class="drag-dots">⋮⋮</span>
+                    <input type="checkbox" class="custom-checkbox" id="chkDrenajes">
+                    <span class="layer-title-text">Drenajes</span>
+                    <div class="layer-row-actions"><span>☰</span><span>•••</span></div>
+                </li>
+            </ul>
         </div>
 
         <div class="floating-panel" id="panelDraw">
-            <div class="panel-header" id="panelDrawHeader">
+            <div class="panel-header-green" id="panelDrawHeader">
                 <span>Dibujar</span>
-                <span class="panel-close" onclick="closePanels()">✕</span>
+                <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body-std">
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Seleccionar modo de dibujo</span>
                 
                 <div class="draw-toolbar">
@@ -640,14 +744,14 @@
         </div>
 
         <div class="floating-panel" id="panelMeasure">
-            <div class="panel-header" id="panelMeasureHeader">
+            <div class="panel-header-green" id="panelMeasureHeader">
                 <span>Medición de Distancias</span>
-                <span class="panel-close" onclick="closePanels()">✕</span>
+                <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body-std">
                 <div class="measure-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;">Distancia</button>
-                    <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;">Área</button>
+                    <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #2e8b22; padding:8px; border-radius:6px; font-weight:700; color:#2e8b22; cursor:pointer;">Distancia</button>
+                    <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #2e8b22; padding:8px; border-radius:6px; font-weight:700; color:#2e8b22; cursor:pointer;">Área</button>
                     <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;">Reiniciar</button>
                 </div>
                 <div class="measure-result" id="measureResult" style="background:#f1f5f9; padding:8px; border-radius:6px; margin-top:10px; text-align:center;">Haz clic en una opción para medir en el mapa.</div>
@@ -655,11 +759,11 @@
         </div>
 
         <div class="floating-panel" id="panelLegend">
-            <div class="panel-header" id="panelLegendHeader">
+            <div class="panel-header-green" id="panelLegendHeader">
                 <span>Leyenda</span>
-                <span class="panel-close" onclick="closePanels()">✕</span>
+                <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body-std">
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(227,26,28,1.0); margin-right:10px;"></span>CUENCAS ALCANTARILLADO</div>
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(35,35,35,0.3); border:1px solid #232323; margin-right:10px;"></span>BARRIOS</div>
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(152,125,183,0.5); border:1px solid #232323; margin-right:10px;"></span>PANTANOS</div>
@@ -671,11 +775,11 @@
         </div>
 
         <div class="floating-panel" id="panelBasemap">
-            <div class="panel-header" id="panelBasemapHeader">
+            <div class="panel-header-green" id="panelBasemapHeader">
                 <span>Mapas Base</span>
-                <span class="panel-close" onclick="closePanels()">✕</span>
+                <span class="panel-close-btn" onclick="closePanels()">✕</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body-std">
                 <label><input type="radio" name="basemap" id="radioSat" checked> GOOGLE SATELLITE</label>
                 <label><input type="radio" name="basemap" id="radioOsm"> OPENSTREETMAP</label>
             </div>
@@ -1188,7 +1292,7 @@
                 layer.editing.enable();
             }
             
-            updateToolbarStyles(null);
+updateToolbarStyles(null);
         });
 
         document.getElementById('drawPolyline').onclick = function() { startDrawing('polyline', 'drawPolyline', 'polyline'); };
@@ -1217,7 +1321,7 @@
 
         function handleMapClickMeasure(e) {
             measurePoints.push(e.latlng);
-            L.circleMarker(e.latlng, { radius: 4, color: '#009EE2', fillColor: '#ffffff', fillOpacity: 1, weight: 2 }).addTo(measureItems);
+            L.circleMarker(e.latlng, { radius: 4, color: '#2e8b22', fillColor: '#ffffff', fillOpacity: 1, weight: 2 }).addTo(measureItems);
 
             if (measureMode === 'distance') {
                 if (measurePoints.length > 1) {
@@ -1225,19 +1329,19 @@
                     for (var i = 0; i < measurePoints.length - 1; i++) {
                         totalDist += measurePoints[i].distanceTo(measurePoints[i+1]);
                     }
-                    L.polyline(measurePoints, { color: '#009EE2', weight: 3, dashArray: '5, 10' }).addTo(measureItems);
+                    L.polyline(measurePoints, { color: '#2e8b22', weight: 3, dashArray: '5, 10' }).addTo(measureItems);
                     var distStr = totalDist > 1000 ? (totalDist/1000).toFixed(2) + ' km' : totalDist.toFixed(1) + ' m';
                     document.getElementById('measureResult').innerText = 'Distancia total: ' + distStr;
                 }
             } else if (measureMode === 'area') {
                 if (measurePoints.length >= 3) {
                     if (tempMeasureLine) map.removeLayer(tempMeasureLine);
-                    tempMeasureLine = L.polygon(measurePoints, { color: '#009EE2', fillColor: '#009EE2', fillOpacity: 0.3 }).addTo(measureItems);
+                    tempMeasureLine = L.polygon(measurePoints, { color: '#2e8b22', fillColor: '#2e8b22', fillOpacity: 0.3 }).addTo(measureItems);
                     var area = calculateApproxArea(measurePoints);
                     var areaStr = area > 10000 ? (area/10000).toFixed(2) + ' Ha' : area.toFixed(1) + ' m²';
                     document.getElementById('measureResult').innerText = 'Área calculada: ' + areaStr;
                 } else if (measurePoints.length > 1) {
-                    L.polyline(measurePoints, { color: '#009EE2', weight: 2 }).addTo(measureItems);
+                    L.polyline(measurePoints, { color: '#2e8b22', weight: 2 }).addTo(measureItems);
                 }
             }
         }
