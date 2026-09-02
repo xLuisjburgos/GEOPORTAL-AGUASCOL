@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=13.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=13.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=13.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=13.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=13.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=14.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=14.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=14.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=14.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=14.0">
         
         <style>
         html, body {
@@ -35,7 +35,7 @@
             height: calc(100% - 55px) !important;
         }
 
-        /* BARRA SUPERIOR EN AZUL CORPORATIVO (#1D52A0 / #009EE2) */
+        /* BARRA SUPERIOR AZUL CORPORATIVO */
         .map-header {
             position: absolute;
             top: 0;
@@ -43,8 +43,8 @@
             width: 100%;
             height: 55px;
             z-index: 2000;
-            background: #1D52A0; /* Azul Principal */
-            border-bottom: 3px solid #009EE2; /* Azul Secundario */
+            background: #1D52A0;
+            border-bottom: 3px solid #009EE2;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
             display: flex;
             align-items: center;
@@ -88,7 +88,7 @@
             font-weight: 600;
         }
 
-        /* BOTONES CIRCULARES EN AZUL CORPORATIVO */
+        /* BOTONES CIRCULARES DE HERRAMIENTAS */
         .header-tools {
             display: flex;
             align-items: center;
@@ -120,19 +120,25 @@
             font-size: 15px;
         }
 
-        /* BUSCADOR FLOTANTE DENTRO DEL MAPA */
+        /* BUSCADOR FLOTANTE EN EL MAPA CON AUTOCOMPLETADO */
         .search-container {
             position: absolute;
             top: 15px;
             left: 60px;
             z-index: 1000;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             background: #ffffff;
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             border: 1px solid #009EE2;
-            overflow: hidden;
+            width: 240px;
+        }
+
+        .search-box-inner {
+            display: flex;
+            align-items: center;
+            width: 100%;
         }
 
         .search-container input {
@@ -140,8 +146,9 @@
             padding: 8px 12px;
             font-size: 12px;
             outline: none;
-            width: 200px;
+            width: 100%;
             color: #333;
+            border-radius: 6px 0 0 6px;
         }
 
         .search-container button {
@@ -151,15 +158,43 @@
             padding: 8px 12px;
             cursor: pointer;
             transition: background 0.2s;
+            border-radius: 0 5px 5px 0;
         }
 
         .search-container button:hover {
             background: #009EE2;
         }
 
-        /* CONTROL DE ZOOM EN EL LADO IZQUIERDO */
+        /* LISTA DE RESULTADOS DEL BUSCADOR */
+        .search-results-list {
+            display: none;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 6px 6px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .search-results-list li {
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #1D52A0;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+        }
+
+        .search-results-list li:hover {
+            background-color: rgba(0, 158, 226, 0.15);
+            color: #009EE2;
+        }
+
+        /* CONTROL DE ZOOM */
         .leaflet-top.leaflet-left {
-            top: 10px !important;
+            top: 15px !important;
             left: 15px !important;
         }
 
@@ -181,7 +216,7 @@
             color: #ffffff !important;
         }
 
-        /* VENTANAS EMERGENTES FLOTANTES (MODALES) DE HERRAMIENTAS */
+        /* VENTANAS EMERGENTES FLOTANTES */
         .floating-panel {
             display: none;
             position: absolute;
@@ -252,7 +287,7 @@
             cursor: pointer;
         }
 
-        /* ELEMENTOS DE LEYENDA */
+        /* LEYENDA */
         .legend-item {
             display: flex;
             align-items: center;
@@ -279,12 +314,10 @@
             display: inline-block;
         }
 
-        /* OCULTAR CONTROL NATIVO DE LEAFLET LAYERS */
         .leaflet-control-layers {
             display: none !important;
         }
 
-        /* POPUPS */
         .leaflet-popup-content-wrapper {
             background: rgba(255, 255, 255, 0.95) !important;
             border-radius: 10px !important;
@@ -305,7 +338,6 @@
                 </div>
             </div>
             
-            <!-- BOTONES CIRCULARES DE HERRAMIENTAS -->
             <div class="header-tools">
                 <button class="tool-btn" id="btnLayers" title="Capas de Información">
                     <i class="fas fa-layer-group"></i>
@@ -320,14 +352,17 @@
         </div>
 
         <div id="map">
-            <!-- BUSCADOR FLOTANTE -->
+            <!-- BUSCADOR FLOTANTE CON RESULTADOS -->
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
-                <button id="searchBtn"><i class="fas fa-search"></i></button>
+                <div class="search-box-inner">
+                    <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <ul id="searchResults" class="search-results-list"></ul>
             </div>
         </div>
 
-        <!-- VENTANA EMERGENTE (MODAL) DE CAPAS SHAPEFILES -->
+        <!-- PANEL DE CAPAS -->
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header">
                 <span>Capas de Información</span>
@@ -344,7 +379,7 @@
             </div>
         </div>
 
-        <!-- VENTANA EMERGENTE (MODAL) DE LEYENDA -->
+        <!-- PANEL DE LEYENDA -->
         <div class="floating-panel" id="panelLegend">
             <div class="panel-header">
                 <span>Leyenda</span>
@@ -361,7 +396,7 @@
             </div>
         </div>
 
-        <!-- VENTANA EMERGENTE (MODAL) DE MAPAS BASE -->
+        <!-- PANEL DE MAPAS BASE -->
         <div class="floating-panel" id="panelBasemap">
             <div class="panel-header">
                 <span>Mapas Base</span>
@@ -429,6 +464,86 @@
 
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
+
+        // LISTA DE CAPAS VECTORIALES PARA BUSCAR
+        var searchLayers = [
+            { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
+            { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
+            { layer: layer_DRENAJESCACUASIA_2, name: 'DRENAJES' }
+        ];
+
+        // MOTOR DE BÚSQUEDA
+        var searchInput = document.getElementById('searchInput');
+        var searchResults = document.getElementById('searchResults');
+
+        function executeSearch(query) {
+            searchResults.innerHTML = '';
+            if (!query || query.trim().length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            var matches = [];
+            var term = query.toLowerCase().trim();
+
+            searchLayers.forEach(function(item) {
+                item.layer.eachLayer(function(l) {
+                    if (l.feature && l.feature.properties) {
+                        for (var key in l.feature.properties) {
+                            var val = l.feature.properties[key];
+                            if (val && String(val).toLowerCase().includes(term)) {
+                                matches.push({
+                                    label: String(val) + ' (' + item.name + ')',
+                                    layerObj: l
+                                });
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (matches.length > 0) {
+                searchResults.style.display = 'block';
+                matches.slice(0, 8).forEach(function(m) {
+                    var li = document.createElement('li');
+                    li.innerText = m.label;
+                    li.onclick = function() {
+                        var targetLayer = m.layerObj;
+                        if (targetLayer.getBounds) {
+                            map.fitBounds(targetLayer.getBounds(), { maxZoom: 17 });
+                        } else if (targetLayer.getLatLng) {
+                            map.setView(targetLayer.getLatLng(), 17);
+                        }
+                        targetLayer.openPopup();
+                        searchResults.style.display = 'none';
+                        searchInput.value = '';
+                    };
+                    searchResults.appendChild(li);
+                });
+            } else {
+                searchResults.style.display = 'block';
+                var li = document.createElement('li');
+                li.innerText = 'Sin resultados';
+                li.style.color = '#888';
+                searchResults.appendChild(li);
+            }
+        }
+
+        searchInput.addEventListener('input', function() {
+            executeSearch(this.value);
+        });
+
+        document.getElementById('searchBtn').onclick = function() {
+            executeSearch(searchInput.value);
+        };
+
+        // OCULTAR RESULTADOS AL HACER CLIC FUERA
+        document.addEventListener('click', function(e) {
+            if (!document.querySelector('.search-container').contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
 
         // CONTROL DE VENTANAS EMERGENTES (MODALES)
         function closePanels() {
