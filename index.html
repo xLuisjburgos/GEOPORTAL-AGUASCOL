@@ -138,4 +138,792 @@
             left: 65px;
             z-index: 1000;
             display: flex;
-            flex
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #009EE2;
+            width: 240px;
+        }
+
+        .search-box-inner {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .search-container input {
+            border: none;
+            padding: 8px 12px;
+            font-size: 12px;
+            outline: none;
+            width: 100%;
+            color: #333;
+            border-radius: 6px 0 0 6px;
+        }
+
+        .search-container button {
+            background: #1D52A0;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .search-container button:hover {
+            background: #009EE2;
+        }
+
+        .search-results-list {
+            display: none;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 6px 6px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .search-results-list li {
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #1D52A0;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+        }
+
+        .search-results-list li:hover {
+            background-color: rgba(0, 158, 226, 0.15);
+            color: #009EE2;
+        }
+
+        /* CONTROL DE ZOOM */
+        .leaflet-top.leaflet-left {
+            top: 12px !important;
+            left: 12px !important;
+        }
+
+        .leaflet-bar {
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+            border-radius: 6px !important;
+            overflow: hidden !important;
+        }
+
+        .leaflet-bar a {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            color: #1D52A0 !important;
+            font-weight: bold;
+        }
+
+        .leaflet-bar a:hover {
+            background-color: #009EE2 !important;
+            color: #ffffff !important;
+        }
+
+        /* VENTANAS EMERGENTES FLOTANTES ARRASTRABLES */
+        .floating-panel {
+            display: none;
+            position: absolute;
+            top: 65px;
+            right: 15px;
+            z-index: 2500;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            border: 1px solid rgba(29, 82, 160, 0.3);
+            width: 270px;
+            max-height: 70vh;
+            overflow: hidden;
+        }
+
+        .floating-panel.active {
+            display: block !important;
+        }
+
+        /* ENCABEZADO DE LA VENTANA */
+        .panel-header {
+            background: #1D52A0;
+            color: #ffffff;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #009EE2;
+            cursor: move;
+            user-select: none;
+        }
+
+        .panel-close {
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .panel-close:hover {
+            color: #009EE2;
+        }
+
+        .panel-body {
+            padding: 12px 14px;
+            color: #1D52A0;
+            font-size: 11px;
+            font-weight: 700;
+            max-height: calc(70vh - 45px);
+            overflow-y: auto;
+        }
+
+        .panel-body label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            gap: 6px;
+        }
+
+        .layer-icon {
+            width: 16px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .panel-body input[type="checkbox"],
+        .panel-body input[type="radio"] {
+            accent-color: #009EE2;
+            width: 15px;
+            height: 15px;
+            margin-right: 4px;
+            cursor: pointer;
+        }
+
+        /* BOTONES DE DIBUJO Y MEDICIÓN CON MINI ICONOS */
+        .draw-options, .measure-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .action-btn {
+            background: #ffffff;
+            border: 1px solid #009EE2;
+            color: #1D52A0;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-btn i {
+            font-size: 12px;
+        }
+
+        .action-btn:hover, .action-btn.active-action {
+            background: #009EE2;
+            color: #ffffff;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            grid-column: span 2;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .measure-result {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #1e293b;
+            text-align: center;
+        }
+
+        /* LEYENDA */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: #1D52A0;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legend-symbol {
+            width: 18px;
+            height: 12px;
+            margin-right: 10px;
+            border-radius: 2px;
+            display: inline-block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .legend-line {
+            width: 18px;
+            height: 3px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .leaflet-control-layers {
+            display: none !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 10px !important;
+            border: 1px solid #009EE2 !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+        }
+        </style>
+        <title>GEOPORTAL - AGUASCOL</title>
+    </head>
+    <body>
+        <div class="map-header">
+            <div class="header-brand">
+                <img src="LOGO.png" alt="AGUASCOL LOGO">
+                <div class="header-titles">
+                    <span class="header-title">GEOPORTAL - AGUASCOL</span>
+                    <span class="header-subtitle">MUNICIPIO DE CAUCASIA</span>
+                </div>
+            </div>
+            
+            <div class="header-tools">
+                <button class="tool-btn" id="btnLayers" title="Capas de Información">
+                    <svg viewBox="0 0 512 512"><path d="M12.41 216.14l182.89 104.38a64 64 0 0 0 61.4 0l182.89-104.38a24 24 0 0 0 0-41.82L256.7 69.94a64 64 0 0 0-61.4 0L12.41 174.32a24 24 0 0 0 0 41.82zM256 368a63.71 63.71 0 0 1-30.7-7.85l-132-75.3a16 16 0 0 0-23.86 14v48.63a32 32 0 0 0 16.57 28l153.29 87.52a64 64 0 0 0 61.4 0l153.29-87.52a32 32 0 0 0 16.57-28v-48.63a16 16 0 0 0-23.86-14l-132 75.3A63.71 63.71 0 0 1 256 368z"/></svg>
+                </button>
+                <button class="tool-btn" id="btnDraw" title="Herramientas de Dibujo">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="tool-btn" id="btnMeasure" title="Regla de Medición">
+                    <i class="fas fa-ruler-combined"></i>
+                </button>
+                <button class="tool-btn" id="btnLegend" title="Leyenda">
+                    <i class="fas fa-list-ul"></i>
+                </button>
+                <button class="tool-btn" id="btnBasemap" title="Mapas Base">
+                    <i class="fas fa-map"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="map">
+            <div class="search-container">
+                <div class="search-box-inner">
+                    <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <ul id="searchResults" class="search-results-list"></ul>
+            </div>
+        </div>
+
+        <div class="floating-panel" id="panelLayers">
+            <div class="panel-header" id="panelLayersHeader">
+                <span>Capas de Información</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <label><input type="checkbox" id="chkCuencas" checked> <i class="fas fa-project-diagram layer-icon" style="color: #e31a1c;"></i> CUENCAS ALCANTARILLADO</label>
+                <label><input type="checkbox" id="chkBarrios" checked> <i class="fas fa-city layer-icon" style="color: #232323;"></i> BARRIOS</label>
+                <label><input type="checkbox" id="chkPantanos" checked> <i class="fas fa-tree layer-icon" style="color: #987db7;"></i> PANTANOS</label>
+                <label><input type="checkbox" id="chkRio" checked> <i class="fas fa-water layer-icon" style="color: #b89b6b;"></i> RÍO CAUCA</label>
+                <label><input type="checkbox" id="chkCienagas" checked> <i class="fas fa-tint layer-icon" style="color: #ff8b12;"></i> CIÉNAGAS</label>
+                <label><input type="checkbox" id="chkLagunas" checked> <i class="fas fa-water layer-icon" style="color: #729f6f;"></i> LAGUNAS</label>
+                <label><input type="checkbox" id="chkDrenajes" checked> <i class="fas fa-route layer-icon" style="color: #009ee2;"></i> DRENAJES</label>
+            </div>
+        </div>
+
+        <div class="floating-panel" id="panelDraw">
+            <div class="panel-header" id="panelDrawHeader">
+                <span>Herramientas de Dibujo</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <div class="draw-options">
+                    <button class="action-btn" id="drawPolyline"><i class="fas fa-slash"></i> Línea</button>
+                    <button class="action-btn" id="drawRectangle"><i class="far fa-square"></i> Cuadrado</button>
+                    <button class="action-btn" id="drawCircle"><i class="far fa-circle"></i> Círculo</button>
+                    <button class="action-btn" id="drawPolygon"><i class="fas fa-draw-polygon"></i> Polígono</button>
+                    <button class="action-btn" id="drawMarker"><i class="fas fa-map-marker-alt"></i> Punto</button>
+                    <button class="action-btn btn-danger" id="clearDrawings"><i class="fas fa-trash"></i> Limpiar Dibujos</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="floating-panel" id="panelMeasure">
+            <div class="panel-header" id="panelMeasureHeader">
+                <span>Medición de Distancias</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <div class="measure-options">
+                    <button class="action-btn" id="measureDistance"><i class="fas fa-ruler"></i> Distancia</button>
+                    <button class="action-btn" id="measureArea"><i class="fas fa-draw-polygon"></i> Área</button>
+                    <button class="action-btn btn-danger" id="clearMeasurement"><i class="fas fa-trash"></i> Reiniciar</button>
+                </div>
+                <div class="measure-result" id="measureResult">Haz clic en una opción para medir en el mapa.</div>
+            </div>
+        </div>
+
+        <div class="floating-panel" id="panelLegend">
+            <div class="panel-header" id="panelLegendHeader">
+                <span>Leyenda</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <div class="legend-item"><span class="legend-line" style="background: rgba(227,26,28,1.0);"></span>CUENCAS ALCANTARILLADO</div>
+                <div class="legend-item"><span class="legend-symbol" style="background: rgba(35,35,35,0.3); border: 1px solid #232323;"></span>BARRIOS</div>
+                <div class="legend-item"><span class="legend-symbol" style="background: rgba(152,125,183,0.5); border: 1px solid #232323;"></span>PANTANOS</div>
+                <div class="legend-item"><span class="legend-symbol" style="background: rgba(184,155,107,0.5); border: 1px solid #232323;"></span>RÍO CAUCA</div>
+                <div class="legend-item"><span class="legend-symbol" style="background: rgba(255,139,18,0.5); border: 1px solid #232323;"></span>CIÉNAGAS</div>
+                <div class="legend-item"><span class="legend-symbol" style="background: rgba(114,155,111,0.5); border: 1px solid #232323;"></span>LAGUNAS</div>
+                <div class="legend-item"><span class="legend-line" style="background: rgba(0,158,226,1.0); height: 2px;"></span>DRENAJES</div>
+            </div>
+        </div>
+
+        <div class="floating-panel" id="panelBasemap">
+            <div class="panel-header" id="panelBasemapHeader">
+                <span>Mapas Base</span>
+                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+            </div>
+            <div class="panel-body">
+                <label><input type="radio" name="basemap" id="radioSat" checked> GOOGLE SATELLITE</label>
+                <label><input type="radio" name="basemap" id="radioOsm"> OPENSTREETMAP</label>
+            </div>
+        </div>
+
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="data/DRENAJESCACUASIA_2.js"></script>
+        <script src="data/LAGUNASCAUCASIA_3.js"></script>
+        <script src="data/CIENAGASCAUCASIA_4.js"></script>
+        <script src="data/RIOCAUCA_5.js"></script>
+        <script src="data/PANTANOSCAUCASIA_6.js"></script>
+        <script src="data/BARRIOSCAUCASIA_7.js"></script>
+        <script src="data/CUENCASALCANTARILLADO_8.js"></script>
+        
+        <script>
+        // Habilitamos Leaflet.Editable en las opciones del mapa
+        var map = L.map('map', { zoomControl:false, maxZoom:28, minZoom:1, editable: true });
+        var zoomControl = L.control.zoom({ position: 'topleft' }).addTo(map);
+
+        var bounds_group = new L.featureGroup([]);
+        var drawnItems = new L.FeatureGroup().addTo(map);
+        var tempDrawNodes = new L.FeatureGroup().addTo(map);
+        var measureItems = new L.FeatureGroup().addTo(map);
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+
+        function createPopFunction() {
+            return function pop_Feature(feature, layer) {
+                var popupContent = '<table>';
+                for (var prop in feature.properties) {
+                    if (feature.properties[prop] !== null) {
+                        popupContent += '<tr><th style="padding-right:8px; font-size:11px; color:#1D52A0; text-transform:uppercase;">' + prop + ':</th><td style="font-size:11px;">' + autolinker.link(String(feature.properties[prop])) + '</td></tr>';
+                    }
+                }
+                popupContent += '</table>';
+                layer.bindPopup(popupContent, { maxHeight: 400 });
+            };
+        }
+
+        // CAPAS BASE
+        var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { minZoom: 1, maxZoom: 28 });
+        var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
+        map.addLayer(layer_GoogleSatellite_1);
+
+        // CAPAS VECTORIALES
+        var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } }).addTo(map);
+        var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
+        var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
+        var layer_RIOCAUCA_5 = new L.geoJson(json_RIOCAUCA_5, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(184,155,107,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
+        var layer_PANTANOSCAUCASIA_6 = new L.geoJson(json_PANTANOSCAUCASIA_6, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(152,125,183,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
+        var layer_BARRIOSCAUCASIA_7 = new L.geoJson(json_BARRIOSCAUCASIA_7, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', weight: 1.0, fillOpacity: 0.3 }; } }).addTo(map);
+        var layer_CUENCASALCANTARILLADO_8 = new L.geoJson(json_CUENCASALCANTARILLADO_8, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(227,26,28,1.0)', weight: 2.0, fillOpacity: 0.3 }; } }).addTo(map);
+
+        bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
+        if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
+
+        // MOTOR DE BÚSQUEDA
+        var searchLayers = [
+            { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
+            { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
+            { layer: layer_DRENAJESCACUASIA_2, name: 'DRENAJES' }
+        ];
+
+        var searchInput = document.getElementById('searchInput');
+        var searchResults = document.getElementById('searchResults');
+
+        function executeSearch(query) {
+            searchResults.innerHTML = '';
+            if (!query || query.trim().length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            var matches = [];
+            var term = query.toLowerCase().trim();
+
+            searchLayers.forEach(function(item) {
+                item.layer.eachLayer(function(l) {
+                    if (l.feature && l.feature.properties) {
+                        for (var key in l.feature.properties) {
+                            var val = l.feature.properties[key];
+                            if (val && String(val).toLowerCase().includes(term)) {
+                                matches.push({
+                                    label: String(val) + ' (' + item.name + ')',
+                                    layerObj: l
+                                });
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (matches.length > 0) {
+                searchResults.style.display = 'block';
+                matches.slice(0, 8).forEach(function(m) {
+                    var li = document.createElement('li');
+                    li.innerText = m.label;
+                    li.onclick = function() {
+                        var targetLayer = m.layerObj;
+                        if (targetLayer.getBounds) {
+                            map.fitBounds(targetLayer.getBounds(), { maxZoom: 17 });
+                        } else if (targetLayer.getLatLng) {
+                            map.setView(targetLayer.getLatLng(), 17);
+                        }
+                        targetLayer.openPopup();
+                        searchResults.style.display = 'none';
+                        searchInput.value = '';
+                    };
+                    searchResults.appendChild(li);
+                });
+            } else {
+                searchResults.style.display = 'block';
+                var li = document.createElement('li');
+                li.innerText = 'Sin resultados';
+                li.style.color = '#888';
+                searchResults.appendChild(li);
+            }
+        }
+
+        searchInput.addEventListener('input', function() { executeSearch(this.value); });
+        document.getElementById('searchBtn').onclick = function() { executeSearch(searchInput.value); };
+        document.addEventListener('click', function(e) {
+            if (!document.querySelector('.search-container').contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // CONTROL DE VENTANAS EMERGENTES (MODALES DESPLEGABLES)
+        function closePanels() {
+            var panels = document.querySelectorAll('.floating-panel');
+            var buttons = document.querySelectorAll('.tool-btn');
+            panels.forEach(function(p) { p.classList.remove('active'); });
+            buttons.forEach(function(b) { b.classList.remove('active-btn'); });
+            disableActiveModes();
+        }
+
+        function togglePanel(panelId, btnId) {
+            var panel = document.getElementById(panelId);
+            var btn = document.getElementById(btnId);
+            var isActive = panel.classList.contains('active');
+            
+            closePanels();
+            
+            if (!isActive) {
+                panel.classList.add('active');
+                if (btn) btn.classList.add('active-btn');
+            }
+        }
+
+        document.getElementById('btnLayers').onclick = function(e) { e.stopPropagation(); togglePanel('panelLayers', 'btnLayers'); };
+        document.getElementById('btnDraw').onclick = function(e) { e.stopPropagation(); togglePanel('panelDraw', 'btnDraw'); };
+        document.getElementById('btnMeasure').onclick = function(e) { e.stopPropagation(); togglePanel('panelMeasure', 'btnMeasure'); };
+        document.getElementById('btnLegend').onclick = function(e) { e.stopPropagation(); togglePanel('panelLegend', 'btnLegend'); };
+        document.getElementById('btnBasemap').onclick = function(e) { e.stopPropagation(); togglePanel('panelBasemap', 'btnBasemap'); };
+
+        // FUNCIÓN DRAGGABLE
+        function makeElementDraggable(elmnt, header) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (header) {
+                header.onmousedown = dragMouseDown;
+                header.ontouchstart = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                pos3 = clientX;
+                pos4 = clientY;
+                
+                document.onmouseup = closeDragElement;
+                document.ontouchend = closeDragElement;
+                document.onmousemove = elementDrag;
+                document.ontouchmove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+                
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                elmnt.style.right = "auto";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+            }
+        }
+
+        makeElementDraggable(document.getElementById("panelLayers"), document.getElementById("panelLayersHeader"));
+        makeElementDraggable(document.getElementById("panelDraw"), document.getElementById("panelDrawHeader"));
+        makeElementDraggable(document.getElementById("panelMeasure"), document.getElementById("panelMeasureHeader"));
+        makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
+        makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
+
+        // CHECKBOXES Y CAPAS
+        document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
+        document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
+        document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
+        document.getElementById('chkRio').onchange = function() { this.checked ? map.addLayer(layer_RIOCAUCA_5) : map.removeLayer(layer_RIOCAUCA_5); };
+        document.getElementById('chkCienagas').onchange = function() { this.checked ? map.addLayer(layer_CIENAGASCAUCASIA_4) : map.removeLayer(layer_CIENAGASCAUCASIA_4); };
+        document.getElementById('chkLagunas').onchange = function() { this.checked ? map.addLayer(layer_LAGUNASCAUCASIA_3) : map.removeLayer(layer_LAGUNASCAUCASIA_3); };
+        document.getElementById('chkDrenajes').onchange = function() { this.checked ? map.addLayer(layer_DRENAJESCACUASIA_2) : map.removeLayer(layer_DRENAJESCACUASIA_2); };
+
+        document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
+        document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
+
+        // LÓGICA DE DIBUJO, LIMPIEZA AUTOMÁTICA Y EDICIÓN DE VÉRTICES
+        var currentDrawMode = null;
+        var drawPoints = [];
+        var activeTempShape = null;
+
+        function setCursorActive(active) {
+            var mapElem = document.getElementById('map');
+            if (active) {
+                mapElem.classList.add('drawing-active');
+            } else {
+                mapElem.classList.remove('drawing-active');
+            }
+        }
+
+        function updateActionBtnStyles(activeBtnId) {
+            document.querySelectorAll('.draw-options .action-btn, .measure-options .action-btn').forEach(btn => {
+                btn.classList.remove('active-action');
+            });
+            if (activeBtnId) {
+                var btn = document.getElementById(activeBtnId);
+                if (btn) btn.classList.add('active-action');
+            }
+        }
+
+        function disableActiveModes() {
+            currentDrawMode = null;
+            drawPoints = [];
+            setCursorActive(false);
+            updateActionBtnStyles(null);
+            tempDrawNodes.clearLayers();
+            if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
+            map.off('click', handleMapClickDraw);
+            map.off('dblclick', handleMapDblClickDraw);
+            map.off('click', handleMapClickMeasure);
+        }
+
+        function setDrawMode(mode, btnId) {
+            // Elimina la geometría realizada previamente al cambiar a otra opción
+            drawnItems.clearLayers();
+            disableActiveModes();
+            
+            currentDrawMode = mode;
+            setCursorActive(true);
+            updateActionBtnStyles(btnId);
+            map.on('click', handleMapClickDraw);
+            if (mode === 'polygon') {
+                map.on('dblclick', handleMapDblClickDraw);
+            }
+        }
+
+        function addNodeMarker(latlng) {
+            L.circleMarker(latlng, {
+                radius: 5,
+                color: '#ffffff',
+                fillColor: '#e74c3c',
+                fillOpacity: 1.0,
+                weight: 2
+            }).addTo(tempDrawNodes);
+        }
+
+        function handleMapClickDraw(e) {
+            if (currentDrawMode === 'marker') {
+                var marker = L.marker(e.latlng).addTo(drawnItems);
+                if (marker.enableEdit) marker.enableEdit();
+                disableActiveModes();
+            } else if (currentDrawMode === 'circle') {
+                addNodeMarker(e.latlng);
+                if (drawPoints.length === 0) {
+                    drawPoints.push(e.latlng);
+                } else {
+                    var radius = drawPoints[0].distanceTo(e.latlng);
+                    var circle = L.circle(drawPoints[0], { radius: radius, color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    if (circle.enableEdit) circle.enableEdit();
+                    disableActiveModes();
+                }
+            } else if (currentDrawMode === 'rectangle') {
+                addNodeMarker(e.latlng);
+                if (drawPoints.length === 0) {
+                    drawPoints.push(e.latlng);
+                } else {
+                    var bounds = L.latLngBounds(drawPoints[0], e.latlng);
+                    var rect = L.rectangle(bounds, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    if (rect.enableEdit) rect.enableEdit();
+                    disableActiveModes();
+                }
+            } else if (currentDrawMode === 'polyline') {
+                addNodeMarker(e.latlng);
+                drawPoints.push(e.latlng);
+                if (drawPoints.length > 1) {
+                    var line = L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
+                    if (line.enableEdit) line.enableEdit();
+                    disableActiveModes();
+                }
+            } else if (currentDrawMode === 'polygon') {
+                addNodeMarker(e.latlng);
+                drawPoints.push(e.latlng);
+                if (activeTempShape) map.removeLayer(activeTempShape);
+                if (drawPoints.length > 2) {
+                    activeTempShape = L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.3, weight: 3 }).addTo(map);
+                } else {
+                    activeTempShape = L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(map);
+                }
+            }
+        }
+
+        function handleMapDblClickDraw(e) {
+            if (currentDrawMode === 'polygon' && drawPoints.length >= 3) {
+                var poly = L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.4, weight: 3 }).addTo(drawnItems);
+                if (poly.enableEdit) poly.enableEdit();
+                disableActiveModes();
+            }
+        }
+
+        document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline', 'drawPolyline'); };
+        document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle', 'drawRectangle'); };
+        document.getElementById('drawCircle').onclick = function() { setDrawMode('circle', 'drawCircle'); };
+        document.getElementById('drawPolygon').onclick = function() { setDrawMode('polygon', 'drawPolygon'); };
+        document.getElementById('drawMarker').onclick = function() { setDrawMode('marker', 'drawMarker'); };
+        document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
+
+        // LÓGICA DE MEDICIÓN
+        var measureMode = null;
+        var measurePoints = [];
+        var tempMeasureLine = null;
+
+        function setMeasureMode(mode, btnId) {
+            disableActiveModes();
+            measureMode = mode;
+            measurePoints = [];
+            setCursorActive(true);
+            updateActionBtnStyles(btnId);
+            document.getElementById('measureResult').innerText = 'Haz clic en el mapa para iniciar la medición.';
+            map.on('click', handleMapClickMeasure);
+        }
+
+        function handleMapClickMeasure(e) {
+            measurePoints.push(e.latlng);
+            L.circleMarker(e.latlng, { radius: 4, color: '#009EE2', fillColor: '#ffffff', fillOpacity: 1, weight: 2 }).addTo(measureItems);
+
+            if (measureMode === 'distance') {
+                if (measurePoints.length > 1) {
+                    var totalDist = 0;
+                    for (var i = 0; i < measurePoints.length - 1; i++) {
+                        totalDist += measurePoints[i].distanceTo(measurePoints[i+1]);
+                    }
+                    L.polyline(measurePoints, { color: '#009EE2', weight: 3, dashArray: '5, 10' }).addTo(measureItems);
+                    var distStr = totalDist > 1000 ? (totalDist/1000).toFixed(2) + ' km' : totalDist.toFixed(1) + ' m';
+                    document.getElementById('measureResult').innerText = 'Distancia total: ' + distStr;
+                }
+            } else if (measureMode === 'area') {
+                if (measurePoints.length >= 3) {
+                    if (tempMeasureLine) map.removeLayer(tempMeasureLine);
+                    tempMeasureLine = L.polygon(measurePoints, { color: '#009EE2', fillColor: '#009EE2', fillOpacity: 0.3 }).addTo(measureItems);
+                    var area = calculateApproxArea(measurePoints);
+                    var areaStr = area > 10000 ? (area/10000).toFixed(2) + ' Ha' : area.toFixed(1) + ' m²';
+                    document.getElementById('measureResult').innerText = 'Área calculada: ' + areaStr;
+                } else if (measurePoints.length > 1) {
+                    L.polyline(measurePoints, { color: '#009EE2', weight: 2 }).addTo(measureItems);
+                }
+            }
+        }
+
+        function calculateApproxArea(latLngs) {
+            var pointsCount = latLngs.length, area = 0, d2r = Math.PI / 180, p1, p2;
+            if (pointsCount > 2) {
+                for (var i = 0; i < pointsCount; i++) {
+                    p1 = latLngs[i];
+                    p2 = latLngs[(i + 1) % pointsCount];
+                    area += ((p2.lng - p1.lng) * d2r) * (2 + Math.sin(p1.lat * d2r) + Math.sin(p2.lat * d2r));
+                }
+                area = area * 6378137.0 * 6378137.0 / 2.0;
+            }
+            return Math.abs(area);
+        }
+
+        document.getElementById('measureDistance').onclick = function() { setMeasureMode('distance', 'measureDistance'); };
+        document.getElementById('measureArea').onclick = function() { setMeasureMode('area', 'measureArea'); };
+        document.getElementById('clearMeasurement').onclick = function() {
+            measureItems.clearLayers();
+            measurePoints = [];
+            document.getElementById('measureResult').innerText = 'Haz clic en una opción para medir en el mapa.';
+            disableActiveModes();
+        };
+        </script>
+    </body>
+</html>
