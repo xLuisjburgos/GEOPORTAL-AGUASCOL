@@ -8,11 +8,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=19.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=19.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=19.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=19.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=19.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=20.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=20.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=20.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=20.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=20.0">
         
         <style>
         html, body {
@@ -225,7 +225,7 @@
             color: #ffffff !important;
         }
 
-        /* VENTANAS EMERGENTES FLOTANTES ARRASTRABLES (UBICADAS DEBAJO DE LA BARRA SUPERIOR) */
+        /* VENTANAS EMERGENTES FLOTANTES ARRASTRABLES */
         .floating-panel {
             display: none;
             position: absolute;
@@ -308,7 +308,7 @@
             cursor: pointer;
         }
 
-        /* BOTONES DE DIBUJO Y MEDICIÓN */
+        /* BOTONES DE DIBUJO Y MEDICIÓN CON MINI ICONOS */
         .draw-options, .measure-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -330,6 +330,10 @@
             justify-content: center;
             gap: 6px;
             transition: all 0.2s;
+        }
+
+        .action-btn i {
+            font-size: 12px;
         }
 
         .action-btn:hover, .action-btn.active-action {
@@ -458,7 +462,7 @@
             </div>
         </div>
 
-        <!-- 2. VENTANA EMERGENTE: DIBUJO -->
+        <!-- 2. VENTANA EMERGENTE: DIBUJO CON MINI ICONOS Y POLÍGONO -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
                 <span>Herramientas de Dibujo</span>
@@ -469,6 +473,7 @@
                     <button class="action-btn" id="drawPolyline"><i class="fas fa-slash"></i> Línea</button>
                     <button class="action-btn" id="drawRectangle"><i class="far fa-square"></i> Cuadrado</button>
                     <button class="action-btn" id="drawCircle"><i class="far fa-circle"></i> Círculo</button>
+                    <button class="action-btn" id="drawPolygon"><i class="fas fa-draw-polygon"></i> Polígono</button>
                     <button class="action-btn" id="drawMarker"><i class="fas fa-map-marker-alt"></i> Punto</button>
                     <button class="action-btn btn-danger" id="clearDrawings"><i class="fas fa-trash"></i> Limpiar Dibujos</button>
                 </div>
@@ -742,7 +747,7 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // LÓGICA DE DIBUJO CON CURSOR CAMBIANTE
+        // LÓGICA DE DIBUJO COMPLETA (INCLUYE POLÍGONO Y MANEJO DE CURSOR)
         var currentDrawMode = null;
         var drawPoints = [];
         var activeTempShape = null;
@@ -773,6 +778,7 @@
             updateActionBtnStyles(null);
             if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
             map.off('click', handleMapClickDraw);
+            map.off('dblclick', handleMapDblClickDraw);
             map.off('click', handleMapClickMeasure);
         }
 
@@ -782,6 +788,9 @@
             setCursorActive(true);
             updateActionBtnStyles(btnId);
             map.on('click', handleMapClickDraw);
+            if (mode === 'polygon') {
+                map.on('dblclick', handleMapDblClickDraw);
+            }
         }
 
         function handleMapClickDraw(e) {
@@ -810,12 +819,28 @@
                     L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
                     disableActiveModes();
                 }
+            } else if (currentDrawMode === 'polygon') {
+                drawPoints.push(e.latlng);
+                if (activeTempShape) map.removeLayer(activeTempShape);
+                if (drawPoints.length > 2) {
+                    activeTempShape = L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.3, weight: 3 }).addTo(map);
+                } else {
+                    activeTempShape = L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(map);
+                }
+            }
+        }
+
+        function handleMapDblClickDraw(e) {
+            if (currentDrawMode === 'polygon' && drawPoints.length >= 3) {
+                L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.4, weight: 3 }).addTo(drawnItems);
+                disableActiveModes();
             }
         }
 
         document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline', 'drawPolyline'); };
         document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle', 'drawRectangle'); };
         document.getElementById('drawCircle').onclick = function() { setDrawMode('circle', 'drawCircle'); };
+        document.getElementById('drawPolygon').onclick = function() { setDrawMode('polygon', 'drawPolygon'); };
         document.getElementById('drawMarker').onclick = function() { setDrawMode('marker', 'drawMarker'); };
         document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
 
