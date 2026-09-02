@@ -8,13 +8,12 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         
         <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=25.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=25.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=25.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=25.0">
-        <!-- CDN de FontAwesome para garantizar que todos los iconos de dibujo carguen siempre -->
+        <link rel="stylesheet" href="css/leaflet.css?v=27.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=27.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=27.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=27.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=25.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=27.0">
         
         <!-- LEAFLET DRAW CSS Y JS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
@@ -38,6 +37,18 @@
             right: 0 !important;
             width: 100% !important;
             height: calc(100% - 55px) !important;
+        }
+
+        /* PERSONALIZACIÓN DE VÉRTICES DE EDICIÓN */
+        .leaflet-editing-icon {
+            width: 8px !important;
+            height: 8px !important;
+            margin-left: -4px !important;
+            margin-top: -4px !important;
+            border-radius: 50% !important;
+            background-color: #ffffff !important;
+            border: 2px solid #e74c3c !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
         }
 
         /* BARRA SUPERIOR AZUL CORPORATIVO */
@@ -283,7 +294,7 @@
             overflow-y: auto;
         }
 
-        /* BARRA DE BOTONES DE DIBUJO CON ICONOS VISIBLES */
+        /* BARRA DE BOTONES DE DIBUJO */
         .draw-toolbar {
             display: flex;
             align-items: center;
@@ -314,7 +325,7 @@
             color: #ffffff;
         }
 
-        /* PREVISUALIZACIÓN */
+        /* CONTENEDOR DE PREVISUALIZACIÓN DINÁMICA */
         .preview-box {
             display: flex;
             align-items: center;
@@ -324,17 +335,34 @@
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             margin-bottom: 12px;
+            overflow: hidden;
         }
 
-        .preview-shape {
-            width: 24px;
-            height: 24px;
+        /* ESTILOS DE DIVERSAS FORMAS DE PREVISUALIZACIÓN */
+        .preview-shape-point {
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background-color: #6366f1;
             transition: all 0.2s;
         }
 
-        /* GRILLA DE MARCADORES / FORMAS CON ICONOS CORREGIDOS */
+        .preview-shape-line {
+            width: 60px;
+            height: 4px;
+            background-color: #1d52a0;
+            transition: all 0.2s;
+        }
+
+        .preview-shape-polygon {
+            width: 32px;
+            height: 24px;
+            background-color: #b91c1c;
+            clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+            transition: all 0.2s;
+        }
+
+        /* GRILLA ADAPTABLE */
         .shape-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -363,6 +391,7 @@
         .shape-item:hover, .shape-item.selected {
             background: rgba(0, 158, 226, 0.2);
             color: #1D52A0;
+            border: 1px solid #009EE2;
         }
 
         /* CONFIGURACIÓN DE PARÁMETROS Y COLORES */
@@ -408,7 +437,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .switch {
@@ -519,7 +548,7 @@
             </div>
         </div>
 
-        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO -->
+        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO ADAPTABLE -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
                 <span>Dibujar</span>
@@ -528,10 +557,9 @@
             <div class="panel-body">
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Seleccionar modo de dibujo</span>
                 
-                <!-- BARRA CON ICONOS 100% GARANTIZADOS -->
                 <div class="draw-toolbar">
                     <button class="draw-btn-item" id="drawPointer" title="Puntero/Seleccionar"><i class="fas fa-location-arrow"></i></button>
-                    <button class="draw-btn-item" id="drawMarker" title="Punto"><i class="fas fa-map-pin"></i></button>
+                    <button class="draw-btn-item active-action" id="drawMarker" title="Punto"><i class="fas fa-map-pin"></i></button>
                     <button class="draw-btn-item" id="drawPolyline" title="Línea"><i class="fas fa-slash"></i></button>
                     <button class="draw-btn-item" id="drawPolygon" title="Polígono"><i class="fas fa-draw-polygon"></i></button>
                     <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><i class="far fa-square"></i></button>
@@ -541,7 +569,7 @@
 
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Previsualización</span>
                 <div class="preview-box">
-                    <div class="preview-shape" id="previewShape"></div>
+                    <div id="previewShape" class="preview-shape-point"></div>
                 </div>
 
                 <div class="config-row" style="justify-content: space-between;">
@@ -551,51 +579,25 @@
                     </select>
                 </div>
 
-                <!-- GRILLA DE MARCADORES -->
-                <div class="shape-grid" id="shapeGrid">
-                    <div class="shape-item selected" data-shape="circle"><i class="fas fa-circle" style="color: #000000;"></i></div>
-                    <div class="shape-item" data-shape="rhombus"><i class="fas fa-square" style="transform: rotate(45deg); color: #000000;"></i></div>
-                    <div class="shape-item" data-shape="marker"><i class="fas fa-map-pin" style="color: #000000;"></i></div>
-                    <div class="shape-item" data-shape="square"><i class="fas fa-square" style="color: #000000;"></i></div>
-                    <div class="shape-item" data-shape="star"><i class="fas fa-star" style="color: #000000;"></i></div>
-                    <div class="shape-item" data-shape="bookmark"><i class="fas fa-bookmark" style="color: #000000;"></i></div>
+                <!-- GRILLA DINÁMICA DE OPCIONES -->
+                <div class="shape-grid" id="shapeGrid"></div>
 
-                    <div class="shape-item" data-shape="circle-blue"><i class="fas fa-circle" style="color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="rhombus-blue"><i class="fas fa-square" style="transform: rotate(45deg); color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="marker-blue"><i class="fas fa-map-pin" style="color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="square-blue"><i class="fas fa-square" style="color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="star-blue"><i class="fas fa-star" style="color: #009ee2;"></i></div>
-                    <div class="shape-item" data-shape="bookmark-blue"><i class="fas fa-bookmark" style="color: #009ee2;"></i></div>
-
-                    <div class="shape-item" data-shape="circle-green"><i class="fas fa-circle" style="color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="rhombus-green"><i class="fas fa-square" style="transform: rotate(45deg); color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="marker-green"><i class="fas fa-map-pin" style="color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="square-green"><i class="fas fa-square" style="color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="star-green"><i class="fas fa-star" style="color: #2ecc71;"></i></div>
-                    <div class="shape-item" data-shape="bookmark-green"><i class="fas fa-bookmark" style="color: #2ecc71;"></i></div>
-                </div>
-
-                <!-- CONTROLES DE TAMAÑO Y COLORES -->
+                <!-- CONTROLES ADAPTABLES -->
                 <div class="config-row" style="justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <span>Tamaño:</span>
-                        <input type="number" id="sizeInput" value="18" min="5" max="50">
+                    <div style="display: flex; align-items: center; gap: 4px;" id="sizeBox">
+                        <span id="sizeLabel">Tamaño:</span>
+                        <input type="number" id="sizeInput" value="18" min="1" max="50">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;" id="fillColorBox">
                         <span>Relleno:</span>
                         <input type="color" id="fillColorInput" value="#6366f1">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;" id="borderColorBox">
                         <span>Borde:</span>
                         <input type="color" id="borderColorInput" value="#1d52a0">
                     </div>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <span>Grosor:</span>
-                        <input type="number" id="borderWidthInput" value="2" min="0" max="10">
-                    </div>
                 </div>
 
-                <!-- TRANSPARENCIA -->
                 <div class="slider-container">
                     <input type="range" id="opacitySlider" min="0" max="100" value="50">
                     <div style="border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
@@ -603,12 +605,22 @@
                     </div>
                 </div>
 
-                <div class="toggle-switch">
-                    <span>Mostrar ubicación al hacer clic</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chkLocationMeasure">
-                        <span class="slider"></span>
-                    </label>
+                <!-- CONTROLES SWITCH MEDICIÓNS DINÁMICAS -->
+                <div id="switchContainer">
+                    <div class="toggle-switch" id="toggleMeasure1">
+                        <span id="labelMeasure1">Mostrar medición de ubicación</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkMeasure1">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-switch" id="toggleMeasure2" style="display:none;">
+                        <span id="labelMeasure2">Mostrar medición de perímetro</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkMeasure2">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
 
                 <button class="btn-danger" id="btnClearAll"><i class="fas fa-trash-alt"></i> Limpiar todo</button>
@@ -877,60 +889,156 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // LÓGICA DE DIBUJO Y PERSONALIZACIÓN DE ESTILOS DÍNAMICOS
+        // LÓGICA DE PREVISUALIZACIÓN Y DIBUJO MULTI-GEOMETRÍA DINÁMICO
         var currentDrawer = null;
-        var selectedShape = 'circle';
+        var currentGeometryMode = 'marker'; // 'marker', 'polyline', 'polygon'
 
         var sizeInput = document.getElementById('sizeInput');
+        var sizeLabel = document.getElementById('sizeLabel');
         var fillColorInput = document.getElementById('fillColorInput');
         var borderColorInput = document.getElementById('borderColorInput');
-        var borderWidthInput = document.getElementById('borderWidthInput');
         var opacitySlider = document.getElementById('opacitySlider');
         var opacityVal = document.getElementById('opacityVal');
         var previewShape = document.getElementById('previewShape');
+        var shapeGrid = document.getElementById('shapeGrid');
 
+        // RECONSTRUYE LA GRILLA DE OPCIONES SEGÚN EL MODO DE DIBUJO
+        function renderShapeGrid(mode) {
+            shapeGrid.innerHTML = '';
+            var items = [];
+
+            if (mode === 'marker') {
+                items = [
+                    { shape: 'circle', icon: '<i class="fas fa-circle" style="color:#000;"></i>' },
+                    { shape: 'rhombus', icon: '<i class="fas fa-square" style="transform:rotate(45deg);color:#000;"></i>' },
+                    { shape: 'marker', icon: '<i class="fas fa-map-pin" style="color:#000;"></i>' },
+                    { shape: 'square', icon: '<i class="fas fa-square" style="color:#000;"></i>' },
+                    { shape: 'star', icon: '<i class="fas fa-star" style="color:#000;"></i>' },
+                    { shape: 'bookmark', icon: '<i class="fas fa-bookmark" style="color:#000;"></i>' },
+                    { shape: 'circle-blue', icon: '<i class="fas fa-circle" style="color:#009ee2;"></i>', color:'#009ee2' },
+                    { shape: 'marker-blue', icon: '<i class="fas fa-map-pin" style="color:#009ee2;"></i>', color:'#009ee2' },
+                    { shape: 'circle-green', icon: '<i class="fas fa-circle" style="color:#2ecc71;"></i>', color:'#2ecc71' },
+                    { shape: 'marker-green', icon: '<i class="fas fa-map-pin" style="color:#2ecc71;"></i>', color:'#2ecc71' },
+                    { shape: 'circle-orange', icon: '<i class="fas fa-circle" style="color:#f39c12;"></i>', color:'#f39c12' },
+                    { shape: 'marker-orange', icon: '<i class="fas fa-map-pin" style="color:#f39c12;"></i>', color:'#f39c12' }
+                ];
+            } else if (mode === 'polyline') {
+                var colors = ['#2b6cb0', '#c53030', '#2f855a', '#6b46c1', '#009ee2', '#dd6b20'];
+                colors.forEach(c => {
+                    items.push({ icon: `<div style="width:24px;height:3px;background:${c};"></div>`, color: c, dash: false });
+                });
+                colors.forEach(c => {
+                    items.push({ icon: `<div style="width:24px;height:0px;border-top:2px dashed ${c};"></div>`, color: c, dash: true });
+                });
+            } else if (mode === 'polygon') {
+                var polyColors = ['#2b6cb0', '#b91c1c', '#15803d', '#6b21a8', '#0284c7', '#c2410c'];
+                polyColors.forEach(c => {
+                    items.push({ icon: `<div style="width:20px;height:16px;background:${c};clip-path:polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);"></div>`, color: c });
+                });
+            }
+
+            items.forEach((item, index) => {
+                var div = document.createElement('div');
+                div.className = 'shape-item' + (index === 0 ? ' selected' : '');
+                div.innerHTML = item.icon;
+                div.onclick = function() {
+                    document.querySelectorAll('.shape-item').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    if (item.color) {
+                        fillColorInput.value = item.color;
+                        borderColorInput.value = item.color;
+                    }
+                    updatePreview();
+                };
+                shapeGrid.appendChild(div);
+            });
+        }
+
+        // ACTUALIZA LA PREVISUALIZACIÓN Y VISIBILIDAD DE CONTROLES
         function updatePreview() {
             var opacity = opacitySlider.value / 100;
             opacityVal.innerText = opacitySlider.value;
-            
-            previewShape.style.width = sizeInput.value + 'px';
-            previewShape.style.height = sizeInput.value + 'px';
-            previewShape.style.backgroundColor = fillColorInput.value;
-            previewShape.style.borderColor = borderColorInput.value;
-            previewShape.style.borderWidth = borderWidthInput.value + 'px';
-            previewShape.style.borderStyle = borderWidthInput.value > 0 ? 'solid' : 'none';
-            previewShape.style.opacity = opacity;
 
-            if (selectedShape.includes('rhombus')) {
-                previewShape.style.borderRadius = '0px';
-                previewShape.style.transform = 'rotate(45deg)';
-            } else if (selectedShape.includes('square')) {
-                previewShape.style.borderRadius = '2px';
-                previewShape.style.transform = 'none';
-            } else {
-                previewShape.style.borderRadius = '50%';
-                previewShape.style.transform = 'none';
+            var sizeBox = document.getElementById('sizeBox');
+            var fillColorBox = document.getElementById('fillColorBox');
+            var borderColorBox = document.getElementById('borderColorBox');
+
+            if (currentGeometryMode === 'marker') {
+                previewShape.className = 'preview-shape-point';
+                previewShape.style.width = sizeInput.value + 'px';
+                previewShape.style.height = sizeInput.value + 'px';
+                previewShape.style.backgroundColor = fillColorInput.value;
+                previewShape.style.borderColor = borderColorInput.value;
+                previewShape.style.borderWidth = '2px';
+                previewShape.style.borderStyle = 'solid';
+                previewShape.style.opacity = opacity;
+
+                sizeBox.style.display = 'flex';
+                sizeLabel.innerText = 'Tamaño:';
+                fillColorBox.style.display = 'flex';
+                borderColorBox.style.display = 'flex';
+
+            } else if (currentGeometryMode === 'polyline') {
+                previewShape.className = 'preview-shape-line';
+                previewShape.style.height = sizeInput.value + 'px';
+                previewShape.style.backgroundColor = borderColorInput.value;
+                previewShape.style.opacity = opacity;
+
+                sizeBox.style.display = 'flex';
+                sizeLabel.innerText = 'Grosor:';
+                fillColorBox.style.display = 'none';
+                borderColorBox.style.display = 'flex';
+
+            } else if (currentGeometryMode === 'polygon') {
+                previewShape.className = 'preview-shape-polygon';
+                previewShape.style.backgroundColor = fillColorInput.value;
+                previewShape.style.borderColor = borderColorInput.value;
+                previewShape.style.borderWidth = sizeInput.value + 'px';
+                previewShape.style.borderStyle = 'solid';
+                previewShape.style.opacity = opacity;
+
+                sizeBox.style.display = 'flex';
+                sizeLabel.innerText = 'Grosor borde:';
+                fillColorBox.style.display = 'flex';
+                borderColorBox.style.display = 'flex';
             }
+        }
+
+        function setGeometryMode(mode) {
+            currentGeometryMode = mode;
+            renderShapeGrid(mode);
+
+            // Ajustar textos de medición dinámicos
+            var toggle1 = document.getElementById('toggleMeasure1');
+            var toggle2 = document.getElementById('toggleMeasure2');
+            var label1 = document.getElementById('labelMeasure1');
+            var label2 = document.getElementById('labelMeasure2');
+
+            if (mode === 'marker') {
+                toggle1.style.display = 'flex';
+                toggle2.style.display = 'none';
+                label1.innerText = 'Mostrar medición de ubicación';
+                sizeInput.value = 18;
+            } else if (mode === 'polyline') {
+                toggle1.style.display = 'flex';
+                toggle2.style.display = 'none';
+                label1.innerText = 'Mostrar medición de longitud';
+                sizeInput.value = 3;
+            } else if (mode === 'polygon') {
+                toggle1.style.display = 'flex';
+                toggle2.style.display = 'flex';
+                label1.innerText = 'Mostrar medición de área';
+                label2.innerText = 'Mostrar medición de perímetro';
+                sizeInput.value = 2;
+            }
+
+            updatePreview();
         }
 
         sizeInput.addEventListener('input', updatePreview);
         fillColorInput.addEventListener('input', updatePreview);
         borderColorInput.addEventListener('input', updatePreview);
-        borderWidthInput.addEventListener('input', updatePreview);
         opacitySlider.addEventListener('input', updatePreview);
-
-        document.querySelectorAll('.shape-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.shape-item').forEach(i => i.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedShape = this.dataset.shape;
-                
-                if (selectedShape.includes('blue')) { fillColorInput.value = '#009ee2'; }
-                else if (selectedShape.includes('green')) { fillColorInput.value = '#2ecc71'; }
-                
-                updatePreview();
-            });
-        });
 
         function updateToolbarStyles(activeId) {
             document.querySelectorAll('.draw-btn-item').forEach(btn => btn.classList.remove('active-action'));
@@ -953,17 +1061,18 @@
             var opacity = opacitySlider.value / 100;
             return {
                 color: borderColorInput.value,
-                weight: parseInt(borderWidthInput.value),
+                weight: parseInt(sizeInput.value),
                 fillColor: fillColorInput.value,
                 fillOpacity: opacity,
                 opacity: opacity
             };
         }
 
-        function startDrawing(drawType, btnId) {
+        function startDrawing(drawType, btnId, geomMode) {
             drawnItems.clearLayers();
             disableActiveModes();
             updateToolbarStyles(btnId);
+            setGeometryMode(geomMode);
 
             var options = { shapeOptions: getStyleOptions() };
 
@@ -976,7 +1085,7 @@
             } else if (drawType === 'polygon') {
                 currentDrawer = new L.Draw.Polygon(map, options);
             } else if (drawType === 'marker') {
-                var iconHtml = `<div style="width:${sizeInput.value}px; height:${sizeInput.value}px; background:${fillColorInput.value}; border:${borderWidthInput.value}px solid ${borderColorInput.value}; border-radius:50%; opacity:${opacitySlider.value/100};"></div>`;
+                var iconHtml = `<div style="width:${sizeInput.value}px; height:${sizeInput.value}px; background:${fillColorInput.value}; border:2px solid ${borderColorInput.value}; border-radius:50%; opacity:${opacitySlider.value/100};"></div>`;
                 var customIcon = L.divIcon({
                     html: iconHtml,
                     className: '',
@@ -993,9 +1102,11 @@
         map.on(L.Draw.Event.CREATED, function (e) {
             var layer = e.layer;
             
-            if (document.getElementById('chkLocationMeasure').checked && layer.getLatLng) {
-                var latlng = layer.getLatLng();
-                layer.bindPopup(`<b>Ubicación:</b><br>Lat: ${latlng.lat.toFixed(5)}<br>Lng: ${latlng.lng.toFixed(5)}`).openPopup();
+            if (document.getElementById('chkMeasure1').checked) {
+                if (currentGeometryMode === 'marker' && layer.getLatLng) {
+                    var latlng = layer.getLatLng();
+                    layer.bindPopup(`<b>Ubicación:</b><br>Lat: ${latlng.lat.toFixed(5)}<br>Lng: ${latlng.lng.toFixed(5)}`).openPopup();
+                }
             }
 
             drawnItems.addLayer(layer);
@@ -1007,11 +1118,11 @@
             updateToolbarStyles(null);
         });
 
-        document.getElementById('drawPolyline').onclick = function() { startDrawing('polyline', 'drawPolyline'); };
-        document.getElementById('drawRectangle').onclick = function() { startDrawing('rectangle', 'drawRectangle'); };
-        document.getElementById('drawCircle').onclick = function() { startDrawing('circle', 'drawCircle'); };
-        document.getElementById('drawPolygon').onclick = function() { startDrawing('polygon', 'drawPolygon'); };
-        document.getElementById('drawMarker').onclick = function() { startDrawing('marker', 'drawMarker'); };
+        document.getElementById('drawPolyline').onclick = function() { startDrawing('polyline', 'drawPolyline', 'polyline'); };
+        document.getElementById('drawRectangle').onclick = function() { startDrawing('rectangle', 'drawRectangle', 'polygon'); };
+        document.getElementById('drawCircle').onclick = function() { startDrawing('circle', 'drawCircle', 'polygon'); };
+        document.getElementById('drawPolygon').onclick = function() { startDrawing('polygon', 'drawPolygon', 'polygon'); };
+        document.getElementById('drawMarker').onclick = function() { startDrawing('marker', 'drawMarker', 'marker'); };
         document.getElementById('drawPointer').onclick = function() { disableActiveModes(); updateToolbarStyles('drawPointer'); };
         
         document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
@@ -1079,7 +1190,8 @@
             disableActiveModes();
         };
 
-        updatePreview();
+        // Inicializar por defecto en punto
+        setGeometryMode('marker');
         </script>
     </body>
 </html>
