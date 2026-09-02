@@ -7,12 +7,16 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=22.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=22.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=22.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=22.0">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=22.0">
+        <!-- Hojas de estilo externas -->
+        <link rel="stylesheet" href="css/leaflet.css?v=24.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=24.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=24.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=24.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=24.0">
         
+        <!-- LEAFLET DRAW CSS Y JS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+
         <style>
         html, body {
             width: 100% !important;
@@ -32,11 +36,6 @@
             right: 0 !important;
             width: 100% !important;
             height: calc(100% - 55px) !important;
-        }
-
-        /* CURSOR EN MODO DE DIBUJO Y MEDICIÓN */
-        #map.drawing-active, #map.drawing-active .leaflet-interactive {
-            cursor: crosshair !important;
         }
 
         /* BARRA SUPERIOR AZUL CORPORATIVO */
@@ -92,7 +91,7 @@
             font-weight: 600;
         }
 
-        /* BOTONES CIRCULARES DE HERRAMIENTAS EN LA BARRA SUPERIOR */
+        /* BOTONES CIRCULARES EN LA BARRA SUPERIOR */
         .header-tools {
             display: flex;
             align-items: center;
@@ -237,8 +236,8 @@
             border-radius: 10px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             border: 1px solid rgba(29, 82, 160, 0.3);
-            width: 270px;
-            max-height: 70vh;
+            width: 320px;
+            max-height: 80vh;
             overflow: hidden;
         }
 
@@ -246,7 +245,6 @@
             display: block !important;
         }
 
-        /* ENCABEZADO DE LA VENTANA */
         .panel-header {
             background: #1D52A0;
             color: #ffffff;
@@ -279,130 +277,188 @@
             color: #1D52A0;
             font-size: 11px;
             font-weight: 700;
-            max-height: calc(70vh - 45px);
+            max-height: calc(80vh - 45px);
             overflow-y: auto;
         }
 
-        .panel-body label {
+        /* BOTONES DE HERRAMIENTAS Y BARRA MODERNA DE DIBUJO */
+        .draw-toolbar {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .draw-btn-item {
+            background: transparent;
+            border: none;
+            color: #1D52A0;
+            padding: 6px;
+            border-radius: 4px;
             cursor: pointer;
-            text-transform: uppercase;
-            gap: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .layer-icon {
-            width: 16px;
-            text-align: center;
-            font-size: 13px;
+        .draw-btn-item:hover, .draw-btn-item.active-action {
+            background: #009EE2;
+            color: #ffffff;
         }
 
-        .panel-body input[type="checkbox"],
-        .panel-body input[type="radio"] {
-            accent-color: #009EE2;
-            width: 15px;
-            height: 15px;
-            margin-right: 4px;
-            cursor: pointer;
+        /* PREVISUALIZACIÓN */
+        .preview-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 12px;
         }
 
-        /* BOTONES DE DIBUJO Y MEDICIÓN CON MINI ICONOS */
-        .draw-options, .measure-options {
+        .preview-shape {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #6366f1;
+            transition: all 0.2s;
+        }
+
+        /* GRILLA DE MARCADORES / FORMAS */
+        .shape-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+
+        .shape-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #334155;
+            transition: background 0.2s;
+        }
+
+        .shape-item:hover, .shape-item.selected {
+            background: rgba(0, 158, 226, 0.2);
+            color: #1D52A0;
+        }
+
+        /* CONFIGURACIÓN DE PARÁMETROS Y COLORES */
+        .config-row {
+            display: flex;
+            align-items: center;
             gap: 8px;
             margin-bottom: 10px;
         }
 
-        .action-btn {
-            background: #ffffff;
-            border: 1px solid #009EE2;
-            color: #1D52A0;
-            padding: 8px;
-            border-radius: 6px;
+        .config-row input[type="number"] {
+            width: 50px;
+            padding: 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            text-align: center;
             font-size: 11px;
-            font-weight: 700;
+        }
+
+        .config-row input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
             cursor: pointer;
+            background: none;
+        }
+
+        .slider-container {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
-        .action-btn i {
-            font-size: 12px;
+        .slider-container input[type="range"] {
+            flex: 1;
+            accent-color: #009EE2;
         }
 
-        .action-btn:hover, .action-btn.active-action {
-            background: #009EE2;
-            color: #ffffff;
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
         }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+
+        .switch input { display:none; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: #009EE2; }
+        input:checked + .slider:before { transform: translateX(16px); }
 
         .btn-danger {
             background: #e74c3c;
             color: white;
             border: none;
-            grid-column: span 2;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .measure-result {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
             padding: 8px;
             border-radius: 6px;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #1e293b;
-            text-align: center;
-        }
-
-        /* LEYENDA */
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 11px;
-            color: #1D52A0;
+            width: 100%;
             font-weight: 700;
-            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
         }
 
-        .legend-symbol {
-            width: 18px;
-            height: 12px;
-            margin-right: 10px;
-            border-radius: 2px;
-            display: inline-block;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+        .btn-danger:hover { background: #c0392b; }
 
-        .legend-line {
-            width: 18px;
-            height: 3px;
-            margin-right: 10px;
-            display: inline-block;
-        }
-
-        .leaflet-control-layers {
-            display: none !important;
-        }
-
-        .leaflet-popup-content-wrapper {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-radius: 10px !important;
-            border: 1px solid #009EE2 !important;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
-        }
+        .leaflet-draw { display: none !important; }
         </style>
         <title>GEOPORTAL - AGUASCOL</title>
     </head>
     <body>
+        <!-- BARRA SUPERIOR AZUL -->
         <div class="map-header">
             <div class="header-brand">
                 <img src="LOGO.png" alt="AGUASCOL LOGO">
@@ -441,6 +497,7 @@
             </div>
         </div>
 
+        <!-- 1. VENTANA EMERGENTE: CAPAS -->
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header" id="panelLayersHeader">
                 <span>Capas de Información</span>
@@ -457,54 +514,131 @@
             </div>
         </div>
 
+        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO Y ESTILOS -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
-                <span>Herramientas de Dibujo</span>
+                <span>Dibujar</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
             <div class="panel-body">
-                <div class="draw-options">
-                    <button class="action-btn" id="drawPolyline"><i class="fas fa-slash"></i> Línea</button>
-                    <button class="action-btn" id="drawRectangle"><i class="far fa-square"></i> Cuadrado</button>
-                    <button class="action-btn" id="drawCircle"><i class="far fa-circle"></i> Círculo</button>
-                    <button class="action-btn" id="drawPolygon"><i class="fas fa-draw-polygon"></i> Polígono</button>
-                    <button class="action-btn" id="drawMarker"><i class="fas fa-map-marker-alt"></i> Punto</button>
-                    <button class="action-btn btn-danger" id="clearDrawings"><i class="fas fa-trash"></i> Limpiar Dibujos</button>
+                <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Seleccionar modo de dibujo</span>
+                
+                <!-- BARRA DE HERRAMIENTAS DE DIBUJO -->
+                <div class="draw-toolbar">
+                    <button class="draw-btn-item" id="drawPointer" title="Puntero/Seleccionar"><i class="fas fa-mouse-pointer"></i></button>
+                    <button class="draw-btn-item" id="drawMarker" title="Punto"><i class="fas fa-map-marker-alt"></i></button>
+                    <button class="draw-btn-item" id="drawPolyline" title="Línea"><i class="fas fa-slash"></i></button>
+                    <button class="draw-btn-item" id="drawPolygon" title="Polígono"><i class="fas fa-draw-polygon"></i></button>
+                    <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><i class="far fa-square"></i></button>
+                    <button class="draw-btn-item" id="drawCircle" title="Círculo"><i class="far fa-circle"></i></button>
+                    <button class="draw-btn-item" id="clearDrawings" title="Borrar"><i class="fas fa-eraser"></i></button>
                 </div>
+
+                <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Previsualización</span>
+                <div class="preview-box">
+                    <div class="preview-shape" id="previewShape"></div>
+                </div>
+
+                <div class="config-row" style="justify-content: space-between;">
+                    <span>Fuente</span>
+                    <select id="sourceSelect" style="border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 11px; color: #334155;">
+                        <option value="formas">Formas</option>
+                    </select>
+                </div>
+
+                <!-- SELECTOR DE FORMAS / PUNTOS -->
+                <div class="shape-grid" id="shapeGrid">
+                    <div class="shape-item selected" data-shape="circle"><i class="fas fa-circle" style="color: #000;"></i></div>
+                    <div class="shape-item" data-shape="rhombus"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #000;"></i></div>
+                    <div class="shape-item" data-shape="marker"><i class="fas fa-map-pin" style="color: #000;"></i></div>
+                    <div class="shape-item" data-shape="square"><i class="fas fa-square" style="color: #000;"></i></div>
+                    <div class="shape-item" data-shape="star"><i class="fas fa-star" style="color: #000;"></i></div>
+                    <div class="shape-item" data-shape="circle-blue"><i class="fas fa-circle" style="color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="rhombus-blue"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="marker-blue"><i class="fas fa-map-pin" style="color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="square-blue"><i class="fas fa-square" style="color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="star-blue"><i class="fas fa-star" style="color: #009ee2;"></i></div>
+                    <div class="shape-item" data-shape="circle-green"><i class="fas fa-circle" style="color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="rhombus-green"><i class="fas fa-square-full" style="transform: rotate(45deg); color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="marker-green"><i class="fas fa-map-pin" style="color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="square-green"><i class="fas fa-square" style="color: #2ecc71;"></i></div>
+                    <div class="shape-item" data-shape="star-green"><i class="fas fa-star" style="color: #2ecc71;"></i></div>
+                </div>
+
+                <!-- CONTROLES DE TAMAÑO Y COLORES -->
+                <div class="config-row" style="justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>Tamaño:</span>
+                        <input type="number" id="sizeInput" value="18" min="5" max="50">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Relleno:</span>
+                        <input type="color" id="fillColorInput" value="#6366f1">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Borde:</span>
+                        <input type="color" id="borderColorInput" value="#1d52a0">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>Grosor:</span>
+                        <input type="number" id="borderWidthInput" value="2" min="0" max="10">
+                    </div>
+                </div>
+
+                <!-- TRANSPARENCIA -->
+                <div class="slider-container">
+                    <input type="range" id="opacitySlider" min="0" max="100" value="50">
+                    <div style="border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
+                        <span id="opacityVal">50</span>%
+                    </div>
+                </div>
+
+                <div class="toggle-switch">
+                    <span>Mostrar medición de ubicación</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkLocationMeasure">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <button class="btn-danger" id="btnClearAll"><i class="fas fa-trash"></i> Limpiar todo</button>
             </div>
         </div>
 
+        <!-- 3. VENTANA EMERGENTE: MEDICIÓN -->
         <div class="floating-panel" id="panelMeasure">
             <div class="panel-header" id="panelMeasureHeader">
                 <span>Medición de Distancias</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
             <div class="panel-body">
-                <div class="measure-options">
-                    <button class="action-btn" id="measureDistance"><i class="fas fa-ruler"></i> Distancia</button>
-                    <button class="action-btn" id="measureArea"><i class="fas fa-draw-polygon"></i> Área</button>
-                    <button class="action-btn btn-danger" id="clearMeasurement"><i class="fas fa-trash"></i> Reiniciar</button>
+                <div class="measure-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-ruler"></i> Distancia</button>
+                    <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-draw-polygon"></i> Área</button>
+                    <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;"><i class="fas fa-trash"></i> Reiniciar</button>
                 </div>
-                <div class="measure-result" id="measureResult">Haz clic en una opción para medir en el mapa.</div>
+                <div class="measure-result" id="measureResult" style="background:#f1f5f9; padding:8px; border-radius:6px; margin-top:10px; text-align:center;">Haz clic en una opción para medir en el mapa.</div>
             </div>
         </div>
 
+        <!-- 4. VENTANA EMERGENTE: LEYENDA -->
         <div class="floating-panel" id="panelLegend">
             <div class="panel-header" id="panelLegendHeader">
                 <span>Leyenda</span>
                 <i class="fas fa-times panel-close" onclick="closePanels()"></i>
             </div>
             <div class="panel-body">
-                <div class="legend-item"><span class="legend-line" style="background: rgba(227,26,28,1.0);"></span>CUENCAS ALCANTARILLADO</div>
-                <div class="legend-item"><span class="legend-symbol" style="background: rgba(35,35,35,0.3); border: 1px solid #232323;"></span>BARRIOS</div>
-                <div class="legend-item"><span class="legend-symbol" style="background: rgba(152,125,183,0.5); border: 1px solid #232323;"></span>PANTANOS</div>
-                <div class="legend-item"><span class="legend-symbol" style="background: rgba(184,155,107,0.5); border: 1px solid #232323;"></span>RÍO CAUCA</div>
-                <div class="legend-item"><span class="legend-symbol" style="background: rgba(255,139,18,0.5); border: 1px solid #232323;"></span>CIÉNAGAS</div>
-                <div class="legend-item"><span class="legend-symbol" style="background: rgba(114,155,111,0.5); border: 1px solid #232323;"></span>LAGUNAS</div>
-                <div class="legend-item"><span class="legend-line" style="background: rgba(0,158,226,1.0); height: 2px;"></span>DRENAJES</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(227,26,28,1.0); margin-right:10px;"></span>CUENCAS ALCANTARILLADO</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(35,35,35,0.3); border:1px solid #232323; margin-right:10px;"></span>BARRIOS</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(152,125,183,0.5); border:1px solid #232323; margin-right:10px;"></span>PANTANOS</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(184,155,107,0.5); border:1px solid #232323; margin-right:10px;"></span>RÍO CAUCA</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(255,139,18,0.5); border:1px solid #232323; margin-right:10px;"></span>CIÉNAGAS</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:12px; background:rgba(114,155,111,0.5); border:1px solid #232323; margin-right:10px;"></span>LAGUNAS</div>
+                <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(0,158,226,1.0); margin-right:10px;"></span>DRENAJES</div>
             </div>
         </div>
 
+        <!-- 5. VENTANA EMERGENTE: MAPAS BASE -->
         <div class="floating-panel" id="panelBasemap">
             <div class="panel-header" id="panelBasemapHeader">
                 <span>Mapas Base</span>
@@ -516,6 +650,7 @@
             </div>
         </div>
 
+        <!-- SCRIPTS DEL PROYECTO -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -527,6 +662,8 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
         <script src="data/DRENAJESCACUASIA_2.js"></script>
         <script src="data/LAGUNASCAUCASIA_3.js"></script>
         <script src="data/CIENAGASCAUCASIA_4.js"></script>
@@ -541,9 +678,14 @@
 
         var bounds_group = new L.featureGroup([]);
         var drawnItems = new L.FeatureGroup().addTo(map);
-        var tempDrawNodes = new L.FeatureGroup().addTo(map);
         var measureItems = new L.FeatureGroup().addTo(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+
+        var drawControl = new L.Control.Draw({
+            edit: { featureGroup: drawnItems, remove: true },
+            draw: false
+        });
+        map.addControl(drawControl);
 
         function createPopFunction() {
             return function pop_Feature(feature, layer) {
@@ -575,7 +717,7 @@
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
 
-        // MOTOR DE BÚSQUEDA
+        // BUSCADOR
         var searchLayers = [
             { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
             { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
@@ -601,10 +743,7 @@
                         for (var key in l.feature.properties) {
                             var val = l.feature.properties[key];
                             if (val && String(val).toLowerCase().includes(term)) {
-                                matches.push({
-                                    label: String(val) + ' (' + item.name + ')',
-                                    layerObj: l
-                                });
+                                matches.push({ label: String(val) + ' (' + item.name + ')', layerObj: l });
                                 break;
                             }
                         }
@@ -647,7 +786,7 @@
             }
         });
 
-        // CONTROL DE VENTANAS EMERGENTES
+        // VENTANAS EMERGENTES FLOTANTES
         function closePanels() {
             var panels = document.querySelectorAll('.floating-panel');
             var buttons = document.querySelectorAll('.tool-btn');
@@ -675,7 +814,6 @@
         document.getElementById('btnLegend').onclick = function(e) { e.stopPropagation(); togglePanel('panelLegend', 'btnLegend'); };
         document.getElementById('btnBasemap').onclick = function(e) { e.stopPropagation(); togglePanel('panelBasemap', 'btnBasemap'); };
 
-        // FUNCIÓN DRAGGABLE
         function makeElementDraggable(elmnt, header) {
             var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             if (header) {
@@ -687,10 +825,7 @@
                 e = e || window.event;
                 var clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 var clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                
-                pos3 = clientX;
-                pos4 = clientY;
-                
+                pos3 = clientX; pos4 = clientY;
                 document.onmouseup = closeDragElement;
                 document.ontouchend = closeDragElement;
                 document.onmousemove = elementDrag;
@@ -701,22 +836,16 @@
                 e = e || window.event;
                 var clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 var clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                
-                pos1 = pos3 - clientX;
-                pos2 = pos4 - clientY;
-                pos3 = clientX;
-                pos4 = clientY;
-                
+                pos1 = pos3 - clientX; pos2 = pos4 - clientY;
+                pos3 = clientX; pos4 = clientY;
                 elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
                 elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
                 elmnt.style.right = "auto";
             }
 
             function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                document.ontouchend = null;
-                document.ontouchmove = null;
+                document.onmouseup = null; document.onmousemove = null;
+                document.ontouchend = null; document.ontouchmove = null;
             }
         }
 
@@ -738,176 +867,150 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // LÓGICA DE DIBUJO, LIMPIEZA AUTOMÁTICA Y EDICIÓN INTERACTIVA DE VÉRTICES
-        var currentDrawMode = null;
-        var drawPoints = [];
-        var activeShape = null;
-        var activeTempShape = null;
+        // LÓGICA DE DIBUJO Y PERSONALIZACIÓN DE ESTILOS DÍNAMICOS
+        var currentDrawer = null;
+        var selectedShape = 'circle';
 
-        function setCursorActive(active) {
-            var mapElem = document.getElementById('map');
-            if (active) {
-                mapElem.classList.add('drawing-active');
+        // ELEMENTOS DE INTERFAZ DE PERSONALIZACIÓN
+        var sizeInput = document.getElementById('sizeInput');
+        var fillColorInput = document.getElementById('fillColorInput');
+        var borderColorInput = document.getElementById('borderColorInput');
+        var borderWidthInput = document.getElementById('borderWidthInput');
+        var opacitySlider = document.getElementById('opacitySlider');
+        var opacityVal = document.getElementById('opacityVal');
+        var previewShape = document.getElementById('previewShape');
+
+        function updatePreview() {
+            var opacity = opacitySlider.value / 100;
+            opacityVal.innerText = opacitySlider.value;
+            
+            previewShape.style.width = sizeInput.value + 'px';
+            previewShape.style.height = sizeInput.value + 'px';
+            previewShape.style.backgroundColor = fillColorInput.value;
+            previewShape.style.borderColor = borderColorInput.value;
+            previewShape.style.borderWidth = borderWidthInput.value + 'px';
+            previewShape.style.borderStyle = borderWidthInput.value > 0 ? 'solid' : 'none';
+            previewShape.style.opacity = opacity;
+
+            if (selectedShape.includes('rhombus')) {
+                previewShape.style.borderRadius = '0px';
+                previewShape.style.transform = 'rotate(45deg)';
+            } else if (selectedShape.includes('square')) {
+                previewShape.style.borderRadius = '2px';
+                previewShape.style.transform = 'none';
             } else {
-                mapElem.classList.remove('drawing-active');
+                previewShape.style.borderRadius = '50%';
+                previewShape.style.transform = 'none';
             }
         }
 
-        function updateActionBtnStyles(activeBtnId) {
-            document.querySelectorAll('.draw-options .action-btn, .measure-options .action-btn').forEach(btn => {
-                btn.classList.remove('active-action');
+        sizeInput.addEventListener('input', updatePreview);
+        fillColorInput.addEventListener('input', updatePreview);
+        borderColorInput.addEventListener('input', updatePreview);
+        borderWidthInput.addEventListener('input', updatePreview);
+        opacitySlider.addEventListener('input', updatePreview);
+
+        // SELECCIÓN DE MARCADORES / FORMAS DE LA GRILLA
+        document.querySelectorAll('.shape-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.shape-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedShape = this.dataset.shape;
+                
+                // Extraer color rápido de la grilla si aplica
+                if (selectedShape.includes('blue')) { fillColorInput.value = '#009ee2'; }
+                else if (selectedShape.includes('green')) { fillColorInput.value = '#2ecc71'; }
+                
+                updatePreview();
             });
-            if (activeBtnId) {
-                var btn = document.getElementById(activeBtnId);
-                if (btn) btn.classList.add('active-action');
+        });
+
+        function updateToolbarStyles(activeId) {
+            document.querySelectorAll('.draw-btn-item').forEach(btn => btn.classList.remove('active-action'));
+            if (activeId) {
+                var elem = document.getElementById(activeId);
+                if (elem) elem.classList.add('active-action');
             }
         }
 
         function disableActiveModes() {
-            currentDrawMode = null;
-            setCursorActive(false);
-            updateActionBtnStyles(null);
-            if (activeTempShape) { map.removeLayer(activeTempShape); activeTempShape = null; }
-            map.off('click', handleMapClickDraw);
-            map.off('dblclick', handleMapDblClickDraw);
+            if (currentDrawer) {
+                currentDrawer.disable();
+                currentDrawer = null;
+            }
+            updateToolbarStyles(null);
             map.off('click', handleMapClickMeasure);
         }
 
-        function setDrawMode(mode, btnId) {
-            // Elimina la geometría anterior al seleccionar una nueva herramienta
+        function getStyleOptions() {
+            var opacity = opacitySlider.value / 100;
+            return {
+                color: borderColorInput.value,
+                weight: parseInt(borderWidthInput.value),
+                fillColor: fillColorInput.value,
+                fillOpacity: opacity,
+                opacity: opacity
+            };
+        }
+
+        function startDrawing(drawType, btnId) {
             drawnItems.clearLayers();
-            tempDrawNodes.clearLayers();
-            activeShape = null;
             disableActiveModes();
+            updateToolbarStyles(btnId);
+
+            var options = { shapeOptions: getStyleOptions() };
+
+            if (drawType === 'polyline') {
+                currentDrawer = new L.Draw.Polyline(map, options);
+            } else if (drawType === 'rectangle') {
+                currentDrawer = new L.Draw.Rectangle(map, options);
+            } else if (drawType === 'circle') {
+                currentDrawer = new L.Draw.Circle(map, options);
+            } else if (drawType === 'polygon') {
+                currentDrawer = new L.Draw.Polygon(map, options);
+            } else if (drawType === 'marker') {
+                // Generar icono personalizado dinámico para el punto
+                var iconHtml = `<div style="width:${sizeInput.value}px; height:${sizeInput.value}px; background:${fillColorInput.value}; border:${borderWidthInput.value}px solid ${borderColorInput.value}; border-radius:50%; opacity:${opacitySlider.value/100};"></div>`;
+                var customIcon = L.divIcon({
+                    html: iconHtml,
+                    className: '',
+                    iconSize: [parseInt(sizeInput.value), parseInt(sizeInput.value)]
+                });
+                currentDrawer = new L.Draw.Marker(map, { icon: customIcon });
+            }
+
+            if (currentDrawer) {
+                currentDrawer.enable();
+            }
+        }
+
+        map.on(L.Draw.Event.CREATED, function (e) {
+            var layer = e.layer;
             
-            drawPoints = [];
-            currentDrawMode = mode;
-            setCursorActive(true);
-            updateActionBtnStyles(btnId);
-            map.on('click', handleMapClickDraw);
-            if (mode === 'polygon') {
-                map.on('dblclick', handleMapDblClickDraw);
+            // Si el objeto dibuja ubicación y está activo el switch
+            if (document.getElementById('chkLocationMeasure').checked && layer.getLatLng) {
+                var latlng = layer.getLatLng();
+                layer.bindPopup(`<b>Ubicación:</b><br>Lat: ${latlng.lat.toFixed(5)}<br>Lng: ${latlng.lng.toFixed(5)}`).openPopup();
             }
-        }
 
-        // Crear vértices rojos con interacción de arrastre
-        function createEditableNode(latlng, index) {
-            var node = L.circleMarker(latlng, {
-                radius: 6,
-                color: '#ffffff',
-                fillColor: '#e74c3c',
-                fillOpacity: 1.0,
-                weight: 2,
-                interactive: true
-            }).addTo(tempDrawNodes);
-
-            var isDragging = false;
-
-            node.on('mousedown', function (e) {
-                L.DomEvent.stopPropagation(e);
-                map.dragging.disable();
-                isDragging = true;
-
-                var onMouseMove = function (evt) {
-                    if (isDragging) {
-                        node.setLatLng(evt.latlng);
-                        drawPoints[index] = evt.latlng;
-                        updateActiveShape();
-                    }
-                };
-
-                var onMouseUp = function () {
-                    if (isDragging) {
-                        isDragging = false;
-                        map.dragging.enable();
-                        map.off('mousemove', onMouseMove);
-                        map.off('mouseup', onMouseUp);
-                    }
-                };
-
-                map.on('mousemove', onMouseMove);
-                map.on('mouseup', onMouseUp);
-            });
-        }
-
-        function updateActiveShape() {
-            if (!activeShape) return;
-
-            if (currentDrawMode === 'polyline') {
-                activeShape.setLatLngs(drawPoints);
-            } else if (currentDrawMode === 'polygon') {
-                activeShape.setLatLngs(drawPoints);
-            } else if (currentDrawMode === 'rectangle' && drawPoints.length === 2) {
-                activeShape.setBounds(L.latLngBounds(drawPoints[0], drawPoints[1]));
-            } else if (currentDrawMode === 'circle' && drawPoints.length === 2) {
-                var newRadius = drawPoints[0].distanceTo(drawPoints[1]);
-                activeShape.setRadius(newRadius);
+            drawnItems.addLayer(layer);
+            
+            if (layer.editing) {
+                layer.editing.enable();
             }
-        }
+            
+            updateToolbarStyles(null);
+        });
 
-        function handleMapClickDraw(e) {
-            if (currentDrawMode === 'marker') {
-                var marker = L.marker(e.latlng, { draggable: true }).addTo(drawnItems);
-                disableActiveModes();
-            } else if (currentDrawMode === 'circle') {
-                drawPoints.push(e.latlng);
-                createEditableNode(e.latlng, drawPoints.length - 1);
-                
-                if (drawPoints.length === 2) {
-                    var radius = drawPoints[0].distanceTo(drawPoints[1]);
-                    activeShape = L.circle(drawPoints[0], { radius: radius, color: '#e74c3c', weight: 3 }).addTo(drawnItems);
-                    disableActiveModes();
-                }
-            } else if (currentDrawMode === 'rectangle') {
-                drawPoints.push(e.latlng);
-                createEditableNode(e.latlng, drawPoints.length - 1);
-                
-                if (drawPoints.length === 2) {
-                    var bounds = L.latLngBounds(drawPoints[0], drawPoints[1]);
-                    activeShape = L.rectangle(bounds, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
-                    disableActiveModes();
-                }
-            } else if (currentDrawMode === 'polyline') {
-                drawPoints.push(e.latlng);
-                createEditableNode(e.latlng, drawPoints.length - 1);
-                
-                if (drawPoints.length > 1) {
-                    if (activeShape) drawnItems.removeLayer(activeShape);
-                    activeShape = L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(drawnItems);
-                    disableActiveModes();
-                }
-            } else if (currentDrawMode === 'polygon') {
-                drawPoints.push(e.latlng);
-                createEditableNode(e.latlng, drawPoints.length - 1);
-                
-                if (activeTempShape) map.removeLayer(activeTempShape);
-                if (drawPoints.length > 2) {
-                    activeTempShape = L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.3, weight: 3 }).addTo(map);
-                } else {
-                    activeTempShape = L.polyline(drawPoints, { color: '#e74c3c', weight: 3 }).addTo(map);
-                }
-            }
-        }
-
-        function handleMapDblClickDraw(e) {
-            if (currentDrawMode === 'polygon' && drawPoints.length >= 3) {
-                if (activeTempShape) map.removeLayer(activeTempShape);
-                activeShape = L.polygon(drawPoints, { color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.4, weight: 3 }).addTo(drawnItems);
-                disableActiveModes();
-            }
-        }
-
-        document.getElementById('drawPolyline').onclick = function() { setDrawMode('polyline', 'drawPolyline'); };
-        document.getElementById('drawRectangle').onclick = function() { setDrawMode('rectangle', 'drawRectangle'); };
-        document.getElementById('drawCircle').onclick = function() { setDrawMode('circle', 'drawCircle'); };
-        document.getElementById('drawPolygon').onclick = function() { setDrawMode('polygon', 'drawPolygon'); };
-        document.getElementById('drawMarker').onclick = function() { setDrawMode('marker', 'drawMarker'); };
-        document.getElementById('clearDrawings').onclick = function() { 
-            drawnItems.clearLayers(); 
-            tempDrawNodes.clearLayers();
-            activeShape = null;
-            disableActiveModes(); 
-        };
+        document.getElementById('drawPolyline').onclick = function() { startDrawing('polyline', 'drawPolyline'); };
+        document.getElementById('drawRectangle').onclick = function() { startDrawing('rectangle', 'drawRectangle'); };
+        document.getElementById('drawCircle').onclick = function() { startDrawing('circle', 'drawCircle'); };
+        document.getElementById('drawPolygon').onclick = function() { startDrawing('polygon', 'drawPolygon'); };
+        document.getElementById('drawMarker').onclick = function() { startDrawing('marker', 'drawMarker'); };
+        document.getElementById('drawPointer').onclick = function() { disableActiveModes(); updateToolbarStyles('drawPointer'); };
+        
+        document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
+        document.getElementById('btnClearAll').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
 
         // LÓGICA DE MEDICIÓN
         var measureMode = null;
@@ -918,8 +1021,6 @@
             disableActiveModes();
             measureMode = mode;
             measurePoints = [];
-            setCursorActive(true);
-            updateActionBtnStyles(btnId);
             document.getElementById('measureResult').innerText = 'Haz clic en el mapa para iniciar la medición.';
             map.on('click', handleMapClickMeasure);
         }
@@ -972,6 +1073,9 @@
             document.getElementById('measureResult').innerText = 'Haz clic en una opción para medir en el mapa.';
             disableActiveModes();
         };
+
+        // Inicializar vista previa al cargar
+        updatePreview();
         </script>
     </body>
 </html>
