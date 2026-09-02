@@ -7,15 +7,13 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <!-- Hojas de estilo externas -->
-        <link rel="stylesheet" href="css/leaflet.css?v=27.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=27.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=27.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=27.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=28.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=28.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=28.0">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=28.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=27.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=28.0">
         
-        <!-- LEAFLET DRAW CSS Y JS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
         <style>
@@ -39,7 +37,6 @@
             height: calc(100% - 55px) !important;
         }
 
-        /* PERSONALIZACIÓN DE VÉRTICES DE EDICIÓN */
         .leaflet-editing-icon {
             width: 8px !important;
             height: 8px !important;
@@ -104,7 +101,6 @@
             font-weight: 600;
         }
 
-        /* BOTONES CIRCULARES EN LA BARRA SUPERIOR */
         .header-tools {
             display: flex;
             align-items: center;
@@ -141,7 +137,6 @@
             pointer-events: none;
         }
 
-        /* BUSCADOR FLOTANTE EN EL MAPA */
         .search-container {
             position: absolute;
             top: 12px;
@@ -212,31 +207,6 @@
             color: #009EE2;
         }
 
-        /* CONTROL DE ZOOM */
-        .leaflet-top.leaflet-left {
-            top: 12px !important;
-            left: 12px !important;
-        }
-
-        .leaflet-bar {
-            border: none !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
-            border-radius: 6px !important;
-            overflow: hidden !important;
-        }
-
-        .leaflet-bar a {
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            color: #1D52A0 !important;
-            font-weight: bold;
-        }
-
-        .leaflet-bar a:hover {
-            background-color: #009EE2 !important;
-            color: #ffffff !important;
-        }
-
-        /* VENTANAS EMERGENTES FLOTANTES ARRASTRABLES */
         .floating-panel {
             display: none;
             position: absolute;
@@ -294,7 +264,6 @@
             overflow-y: auto;
         }
 
-        /* BARRA DE BOTONES DE DIBUJO */
         .draw-toolbar {
             display: flex;
             align-items: center;
@@ -313,7 +282,7 @@
             padding: 6px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
@@ -325,7 +294,7 @@
             color: #ffffff;
         }
 
-        /* CONTENEDOR DE PREVISUALIZACIÓN DINÁMICA */
+        /* PREVISUALIZACIÓN Y CLASES PARTICULARES */
         .preview-box {
             display: flex;
             align-items: center;
@@ -338,7 +307,6 @@
             overflow: hidden;
         }
 
-        /* ESTILOS DE DIVERSAS FORMAS DE PREVISUALIZACIÓN */
         .preview-shape-point {
             width: 20px;
             height: 20px;
@@ -362,7 +330,20 @@
             transition: all 0.2s;
         }
 
-        /* GRILLA ADAPTABLE */
+        .preview-shape-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #1d52a0;
+            transition: all 0.2s;
+        }
+
+        .preview-shape-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000000;
+        }
+
         .shape-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -394,7 +375,6 @@
             border: 1px solid #009EE2;
         }
 
-        /* CONFIGURACIÓN DE PARÁMETROS Y COLORES */
         .config-row {
             display: flex;
             align-items: center;
@@ -402,13 +382,17 @@
             margin-bottom: 10px;
         }
 
-        .config-row input[type="number"] {
-            width: 50px;
-            padding: 4px;
+        .config-row input[type="number"], .config-row select, .config-row textarea {
             border: 1px solid #cbd5e1;
             border-radius: 4px;
-            text-align: center;
+            padding: 4px;
             font-size: 11px;
+            color: #334155;
+        }
+
+        .config-row input[type="number"] {
+            width: 50px;
+            text-align: center;
         }
 
         .config-row input[type="color"] {
@@ -492,7 +476,6 @@
         <title>GEOPORTAL - AGUASCOL</title>
     </head>
     <body>
-        <!-- BARRA SUPERIOR AZUL -->
         <div class="map-header">
             <div class="header-brand">
                 <img src="LOGO.png" alt="AGUASCOL LOGO">
@@ -531,7 +514,6 @@
             </div>
         </div>
 
-        <!-- 1. VENTANA EMERGENTE: CAPAS -->
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header" id="panelLayersHeader">
                 <span>Capas de Información</span>
@@ -548,7 +530,6 @@
             </div>
         </div>
 
-        <!-- 2. VENTANA EMERGENTE: PANEL COMPLETO DE DIBUJO ADAPTABLE -->
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
                 <span>Dibujar</span>
@@ -564,6 +545,7 @@
                     <button class="draw-btn-item" id="drawPolygon" title="Polígono"><i class="fas fa-draw-polygon"></i></button>
                     <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><i class="far fa-square"></i></button>
                     <button class="draw-btn-item" id="drawCircle" title="Círculo"><i class="far fa-circle"></i></button>
+                    <button class="draw-btn-item" id="drawText" title="Texto"><i class="fas fa-font"></i></button>
                     <button class="draw-btn-item" id="clearDrawings" title="Borrar"><i class="fas fa-eraser"></i></button>
                 </div>
 
@@ -572,40 +554,51 @@
                     <div id="previewShape" class="preview-shape-point"></div>
                 </div>
 
-                <div class="config-row" style="justify-content: space-between;">
-                    <span>Fuente</span>
-                    <select id="sourceSelect" style="border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px; font-size: 11px; color: #334155;">
-                        <option value="formas">Formas</option>
+                <div id="textContentBox" style="display:none; flex-direction:column; gap:4px; margin-bottom:10px;">
+                    <span style="color:#64748b;">Contenido:</span>
+                    <textarea id="textInput" rows="2" style="width:100%; border:1px solid #cbd5e1; border-radius:4px; padding:4px; font-size:11px;">Introducir texto</textarea>
+                </div>
+
+                <div class="config-row" style="justify-content: space-between;" id="fontSelectRow">
+                    <span>Fuente:</span>
+                    <select id="fontSelect" style="width: 140px;">
+                        <option value="Arial, sans-serif">Arial Regular</option>
+                        <option value="'Courier New', monospace">Courier</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
                     </select>
                 </div>
 
-                <!-- GRILLA DINÁMICA DE OPCIONES -->
                 <div class="shape-grid" id="shapeGrid"></div>
 
-                <!-- CONTROLES ADAPTABLES -->
                 <div class="config-row" style="justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 4px;" id="sizeBox">
                         <span id="sizeLabel">Tamaño:</span>
-                        <input type="number" id="sizeInput" value="18" min="1" max="50">
+                        <input type="number" id="sizeInput" value="18" min="1" max="100">
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;" id="fillColorBox">
-                        <span>Relleno:</span>
+                        <span id="fillColorLabel">Relleno:</span>
                         <input type="color" id="fillColorInput" value="#6366f1">
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;" id="borderColorBox">
-                        <span>Borde:</span>
+                        <span id="borderColorLabel">Borde:</span>
                         <input type="color" id="borderColorInput" value="#1d52a0">
                     </div>
                 </div>
 
-                <div class="slider-container">
-                    <input type="range" id="opacitySlider" min="0" max="100" value="50">
+                <div class="config-row" id="rotationRow" style="display:none; justify-content:space-between;">
+                    <span>Rotación:</span>
+                    <input type="range" id="rotationSlider" min="0" max="360" value="0" style="flex:1; accent-color:#009EE2;">
+                    <input type="number" id="rotationInput" value="0" min="0" max="360">
+                </div>
+
+                <div class="slider-container" id="opacityRow">
+                    <span style="font-size:11px; color:#1D52A0;">Opacidad:</span>
+                    <input type="range" id="opacitySlider" min="0" max="100" value="100">
                     <div style="border: 1px solid #cbd5e1; padding: 2px 6px; border-radius: 4px; font-size: 11px;">
-                        <span id="opacityVal">50</span>%
+                        <span id="opacityVal">100</span>%
                     </div>
                 </div>
 
-                <!-- CONTROLES SWITCH MEDICIÓNS DINÁMICAS -->
                 <div id="switchContainer">
                     <div class="toggle-switch" id="toggleMeasure1">
                         <span id="labelMeasure1">Mostrar medición de ubicación</span>
@@ -627,7 +620,6 @@
             </div>
         </div>
 
-        <!-- 3. VENTANA EMERGENTE: MEDICIÓN -->
         <div class="floating-panel" id="panelMeasure">
             <div class="panel-header" id="panelMeasureHeader">
                 <span>Medición de Distancias</span>
@@ -643,7 +635,6 @@
             </div>
         </div>
 
-        <!-- 4. VENTANA EMERGENTE: LEYENDA -->
         <div class="floating-panel" id="panelLegend">
             <div class="panel-header" id="panelLegendHeader">
                 <span>Leyenda</span>
@@ -660,7 +651,6 @@
             </div>
         </div>
 
-        <!-- 5. VENTANA EMERGENTE: MAPAS BASE -->
         <div class="floating-panel" id="panelBasemap">
             <div class="panel-header" id="panelBasemapHeader">
                 <span>Mapas Base</span>
@@ -672,7 +662,6 @@
             </div>
         </div>
 
-        <!-- SCRIPTS DEL PROYECTO -->
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -722,12 +711,10 @@
             };
         }
 
-        // CAPAS BASE
         var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { minZoom: 1, maxZoom: 28 });
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
         map.addLayer(layer_GoogleSatellite_1);
 
-        // CAPAS VECTORIALES
         var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } }).addTo(map);
         var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
         var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } }).addTo(map);
@@ -739,7 +726,6 @@
         bounds_group.addLayer(layer_BARRIOSCAUCASIA_7);
         if (bounds_group.getLayers().length) { map.fitBounds(bounds_group.getBounds()); }
 
-        // BUSCADOR
         var searchLayers = [
             { layer: layer_BARRIOSCAUCASIA_7, name: 'BARRIOS' },
             { layer: layer_CUENCASALCANTARILLADO_8, name: 'CUENCAS' },
@@ -808,7 +794,6 @@
             }
         });
 
-        // VENTANAS EMERGENTES FLOTANTES
         function closePanels() {
             var panels = document.querySelectorAll('.floating-panel');
             var buttons = document.querySelectorAll('.tool-btn');
@@ -877,7 +862,6 @@
         makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
         makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
 
-        // CHECKBOXES Y CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
         document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
         document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
@@ -889,52 +873,52 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // LÓGICA DE PREVISUALIZACIÓN Y DIBUJO MULTI-GEOMETRÍA DINÁMICO
+        // SISTEMA MULTI-PREVISUALIZACIÓN CON MODO TEXTO Y CÍRCULO
         var currentDrawer = null;
-        var currentGeometryMode = 'marker'; // 'marker', 'polyline', 'polygon'
+        var currentGeometryMode = 'marker'; // 'marker', 'polyline', 'polygon', 'circle', 'text'
 
         var sizeInput = document.getElementById('sizeInput');
         var sizeLabel = document.getElementById('sizeLabel');
         var fillColorInput = document.getElementById('fillColorInput');
         var borderColorInput = document.getElementById('borderColorInput');
+        var fontSelect = document.getElementById('fontSelect');
+        var textInput = document.getElementById('textInput');
+        var rotationSlider = document.getElementById('rotationSlider');
+        var rotationInput = document.getElementById('rotationInput');
         var opacitySlider = document.getElementById('opacitySlider');
         var opacityVal = document.getElementById('opacityVal');
         var previewShape = document.getElementById('previewShape');
         var shapeGrid = document.getElementById('shapeGrid');
 
-        // RECONSTRUYE LA GRILLA DE OPCIONES SEGÚN EL MODO DE DIBUJO
         function renderShapeGrid(mode) {
             shapeGrid.innerHTML = '';
             var items = [];
 
             if (mode === 'marker') {
                 items = [
-                    { shape: 'circle', icon: '<i class="fas fa-circle" style="color:#000;"></i>' },
-                    { shape: 'rhombus', icon: '<i class="fas fa-square" style="transform:rotate(45deg);color:#000;"></i>' },
-                    { shape: 'marker', icon: '<i class="fas fa-map-pin" style="color:#000;"></i>' },
-                    { shape: 'square', icon: '<i class="fas fa-square" style="color:#000;"></i>' },
-                    { shape: 'star', icon: '<i class="fas fa-star" style="color:#000;"></i>' },
-                    { shape: 'bookmark', icon: '<i class="fas fa-bookmark" style="color:#000;"></i>' },
-                    { shape: 'circle-blue', icon: '<i class="fas fa-circle" style="color:#009ee2;"></i>', color:'#009ee2' },
-                    { shape: 'marker-blue', icon: '<i class="fas fa-map-pin" style="color:#009ee2;"></i>', color:'#009ee2' },
-                    { shape: 'circle-green', icon: '<i class="fas fa-circle" style="color:#2ecc71;"></i>', color:'#2ecc71' },
-                    { shape: 'marker-green', icon: '<i class="fas fa-map-pin" style="color:#2ecc71;"></i>', color:'#2ecc71' },
-                    { shape: 'circle-orange', icon: '<i class="fas fa-circle" style="color:#f39c12;"></i>', color:'#f39c12' },
-                    { shape: 'marker-orange', icon: '<i class="fas fa-map-pin" style="color:#f39c12;"></i>', color:'#f39c12' }
+                    { icon: '<i class="fas fa-circle" style="color:#000;"></i>' },
+                    { icon: '<i class="fas fa-square" style="transform:rotate(45deg);color:#000;"></i>' },
+                    { icon: '<i class="fas fa-map-pin" style="color:#000;"></i>' },
+                    { icon: '<i class="fas fa-square" style="color:#000;"></i>' },
+                    { icon: '<i class="fas fa-star" style="color:#000;"></i>' },
+                    { icon: '<i class="fas fa-bookmark" style="color:#000;"></i>' },
+                    { icon: '<i class="fas fa-circle" style="color:#009ee2;"></i>', color:'#009ee2' },
+                    { icon: '<i class="fas fa-map-pin" style="color:#009ee2;"></i>', color:'#009ee2' },
+                    { icon: '<i class="fas fa-circle" style="color:#2ecc71;"></i>', color:'#2ecc71' },
+                    { icon: '<i class="fas fa-map-pin" style="color:#2ecc71;"></i>', color:'#2ecc71' }
                 ];
             } else if (mode === 'polyline') {
                 var colors = ['#2b6cb0', '#c53030', '#2f855a', '#6b46c1', '#009ee2', '#dd6b20'];
-                colors.forEach(c => {
-                    items.push({ icon: `<div style="width:24px;height:3px;background:${c};"></div>`, color: c, dash: false });
-                });
-                colors.forEach(c => {
-                    items.push({ icon: `<div style="width:24px;height:0px;border-top:2px dashed ${c};"></div>`, color: c, dash: true });
-                });
+                colors.forEach(c => { items.push({ icon: `<div style="width:24px;height:3px;background:${c};"></div>`, color: c }); });
             } else if (mode === 'polygon') {
                 var polyColors = ['#2b6cb0', '#b91c1c', '#15803d', '#6b21a8', '#0284c7', '#c2410c'];
-                polyColors.forEach(c => {
-                    items.push({ icon: `<div style="width:20px;height:16px;background:${c};clip-path:polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);"></div>`, color: c });
-                });
+                polyColors.forEach(c => { items.push({ icon: `<div style="width:20px;height:16px;background:${c};clip-path:polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);"></div>`, color: c }); });
+            } else if (mode === 'circle') {
+                var circColors = ['#2b6cb0', '#b91c1c', '#15803d', '#6b21a8', '#0284c7', '#c2410c'];
+                circColors.forEach(c => { items.push({ icon: `<div style="width:18px;height:18px;border-radius:50%;background:${c};"></div>`, color: c }); });
+            } else if (mode === 'text') {
+                var txtColors = ['#000000', '#009ee2', '#e74c3c', '#2ecc71', '#9b59b6', '#e67e22'];
+                txtColors.forEach(c => { items.push({ icon: `<span style="font-weight:bold;color:${c}">Aa</span>`, color: c }); });
             }
 
             items.forEach((item, index) => {
@@ -954,7 +938,6 @@
             });
         }
 
-        // ACTUALIZA LA PREVISUALIZACIÓN Y VISIBILIDAD DE CONTROLES
         function updatePreview() {
             var opacity = opacitySlider.value / 100;
             opacityVal.innerText = opacitySlider.value;
@@ -962,9 +945,13 @@
             var sizeBox = document.getElementById('sizeBox');
             var fillColorBox = document.getElementById('fillColorBox');
             var borderColorBox = document.getElementById('borderColorBox');
+            var textContentBox = document.getElementById('textContentBox');
+            var fontSelectRow = document.getElementById('fontSelectRow');
+            var rotationRow = document.getElementById('rotationRow');
 
             if (currentGeometryMode === 'marker') {
                 previewShape.className = 'preview-shape-point';
+                previewShape.innerText = '';
                 previewShape.style.width = sizeInput.value + 'px';
                 previewShape.style.height = sizeInput.value + 'px';
                 previewShape.style.backgroundColor = fillColorInput.value;
@@ -977,9 +964,13 @@
                 sizeLabel.innerText = 'Tamaño:';
                 fillColorBox.style.display = 'flex';
                 borderColorBox.style.display = 'flex';
+                textContentBox.style.display = 'none';
+                fontSelectRow.style.display = 'none';
+                rotationRow.style.display = 'none';
 
             } else if (currentGeometryMode === 'polyline') {
                 previewShape.className = 'preview-shape-line';
+                previewShape.innerText = '';
                 previewShape.style.height = sizeInput.value + 'px';
                 previewShape.style.backgroundColor = borderColorInput.value;
                 previewShape.style.opacity = opacity;
@@ -988,9 +979,13 @@
                 sizeLabel.innerText = 'Grosor:';
                 fillColorBox.style.display = 'none';
                 borderColorBox.style.display = 'flex';
+                textContentBox.style.display = 'none';
+                fontSelectRow.style.display = 'none';
+                rotationRow.style.display = 'none';
 
             } else if (currentGeometryMode === 'polygon') {
                 previewShape.className = 'preview-shape-polygon';
+                previewShape.innerText = '';
                 previewShape.style.backgroundColor = fillColorInput.value;
                 previewShape.style.borderColor = borderColorInput.value;
                 previewShape.style.borderWidth = sizeInput.value + 'px';
@@ -1001,6 +996,46 @@
                 sizeLabel.innerText = 'Grosor borde:';
                 fillColorBox.style.display = 'flex';
                 borderColorBox.style.display = 'flex';
+                textContentBox.style.display = 'none';
+                fontSelectRow.style.display = 'none';
+                rotationRow.style.display = 'none';
+
+            } else if (currentGeometryMode === 'circle') {
+                previewShape.className = 'preview-shape-circle';
+                previewShape.innerText = '';
+                previewShape.style.width = (parseInt(sizeInput.value) + 16) + 'px';
+                previewShape.style.height = (parseInt(sizeInput.value) + 16) + 'px';
+                previewShape.style.backgroundColor = fillColorInput.value;
+                previewShape.style.borderColor = borderColorInput.value;
+                previewShape.style.borderWidth = '2px';
+                previewShape.style.borderStyle = 'solid';
+                previewShape.style.opacity = opacity;
+
+                sizeBox.style.display = 'flex';
+                sizeLabel.innerText = 'Grosor borde:';
+                fillColorBox.style.display = 'flex';
+                borderColorBox.style.display = 'flex';
+                textContentBox.style.display = 'none';
+                fontSelectRow.style.display = 'none';
+                rotationRow.style.display = 'none';
+
+            } else if (currentGeometryMode === 'text') {
+                previewShape.className = 'preview-shape-text';
+                previewShape.innerText = 'Aa';
+                previewShape.style.fontFamily = fontSelect.value;
+                previewShape.style.fontSize = sizeInput.value + 'px';
+                previewShape.style.color = fillColorInput.value;
+                previewShape.style.opacity = opacity;
+                previewShape.style.transform = `rotate(${rotationSlider.value}deg)`;
+
+                sizeBox.style.display = 'flex';
+                sizeLabel.innerText = 'Tamaño:';
+                fillColorBox.style.display = 'flex';
+                document.getElementById('fillColorLabel').innerText = 'Color:';
+                borderColorBox.style.display = 'none';
+                textContentBox.style.display = 'flex';
+                fontSelectRow.style.display = 'flex';
+                rotationRow.style.display = 'flex';
             }
         }
 
@@ -1008,23 +1043,22 @@
             currentGeometryMode = mode;
             renderShapeGrid(mode);
 
-            // Ajustar textos de medición dinámicos
             var toggle1 = document.getElementById('toggleMeasure1');
             var toggle2 = document.getElementById('toggleMeasure2');
             var label1 = document.getElementById('labelMeasure1');
             var label2 = document.getElementById('labelMeasure2');
 
-            if (mode === 'marker') {
+            if (mode === 'marker' || mode === 'text') {
                 toggle1.style.display = 'flex';
                 toggle2.style.display = 'none';
-                label1.innerText = 'Mostrar medición de ubicación';
-                sizeInput.value = 18;
+                label1.innerText = mode === 'text' ? 'Mostrar fondo de texto' : 'Mostrar medición de ubicación';
+                sizeInput.value = mode === 'text' ? 22 : 18;
             } else if (mode === 'polyline') {
                 toggle1.style.display = 'flex';
                 toggle2.style.display = 'none';
                 label1.innerText = 'Mostrar medición de longitud';
                 sizeInput.value = 3;
-            } else if (mode === 'polygon') {
+            } else if (mode === 'polygon' || mode === 'circle') {
                 toggle1.style.display = 'flex';
                 toggle2.style.display = 'flex';
                 label1.innerText = 'Mostrar medición de área';
@@ -1035,9 +1069,13 @@
             updatePreview();
         }
 
+        rotationSlider.addEventListener('input', function() { rotationInput.value = this.value; updatePreview(); });
+        rotationInput.addEventListener('input', function() { rotationSlider.value = this.value; updatePreview(); });
         sizeInput.addEventListener('input', updatePreview);
         fillColorInput.addEventListener('input', updatePreview);
         borderColorInput.addEventListener('input', updatePreview);
+        fontSelect.addEventListener('change', updatePreview);
+        textInput.addEventListener('input', updatePreview);
         opacitySlider.addEventListener('input', updatePreview);
 
         function updateToolbarStyles(activeId) {
@@ -1053,6 +1091,7 @@
                 currentDrawer.disable();
                 currentDrawer = null;
             }
+            map.off('click', handleMapTextClick);
             updateToolbarStyles(null);
             map.off('click', handleMapClickMeasure);
         }
@@ -1092,11 +1131,25 @@
                     iconSize: [parseInt(sizeInput.value), parseInt(sizeInput.value)]
                 });
                 currentDrawer = new L.Draw.Marker(map, { icon: customIcon });
+            } else if (drawType === 'text') {
+                map.on('click', handleMapTextClick);
             }
 
             if (currentDrawer) {
                 currentDrawer.enable();
             }
+        }
+
+        function handleMapTextClick(e) {
+            if (currentGeometryMode !== 'text') return;
+            var textVal = textInput.value || 'Texto';
+            var hasBg = document.getElementById('chkMeasure1').checked;
+            var bgStyle = hasBg ? 'background:#ffffff; padding:2px 6px; border-radius:4px; border:1px solid #cbd5e1;' : '';
+            var htmlText = `<div style="font-family:${fontSelect.value}; font-size:${sizeInput.value}px; color:${fillColorInput.value}; opacity:${opacitySlider.value/100}; transform:rotate(${rotationSlider.value}deg); white-space:nowrap; ${bgStyle}">${textVal}</div>`;
+            
+            var textIcon = L.divIcon({ html: htmlText, className: '', iconSize: [100, 30] });
+            var textMarker = L.marker(e.latlng, { icon: textIcon, draggable: true }).addTo(drawnItems);
+            disableActiveModes();
         }
 
         map.on(L.Draw.Event.CREATED, function (e) {
@@ -1120,9 +1173,10 @@
 
         document.getElementById('drawPolyline').onclick = function() { startDrawing('polyline', 'drawPolyline', 'polyline'); };
         document.getElementById('drawRectangle').onclick = function() { startDrawing('rectangle', 'drawRectangle', 'polygon'); };
-        document.getElementById('drawCircle').onclick = function() { startDrawing('circle', 'drawCircle', 'polygon'); };
+        document.getElementById('drawCircle').onclick = function() { startDrawing('circle', 'drawCircle', 'circle'); };
         document.getElementById('drawPolygon').onclick = function() { startDrawing('polygon', 'drawPolygon', 'polygon'); };
         document.getElementById('drawMarker').onclick = function() { startDrawing('marker', 'drawMarker', 'marker'); };
+        document.getElementById('drawText').onclick = function() { startDrawing('text', 'drawText', 'text'); };
         document.getElementById('drawPointer').onclick = function() { disableActiveModes(); updateToolbarStyles('drawPointer'); };
         
         document.getElementById('clearDrawings').onclick = function() { drawnItems.clearLayers(); disableActiveModes(); };
@@ -1190,7 +1244,6 @@
             disableActiveModes();
         };
 
-        // Inicializar por defecto en punto
         setGeometryMode('marker');
         </script>
     </body>
