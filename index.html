@@ -7,12 +7,10 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         
-        <link rel="stylesheet" href="css/leaflet.css?v=29.0">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=29.0">
-        <link rel="stylesheet" href="css/qgis2web.css?v=29.0">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css?v=29.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css?v=29.0">
+        <link rel="stylesheet" href="css/leaflet.css?v=30.0">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css?v=30.0">
+        <link rel="stylesheet" href="css/qgis2web.css?v=30.0">
+        <link rel="stylesheet" href="css/leaflet.photon.css?v=30.0">
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
 
@@ -133,7 +131,7 @@
             transform: translateY(-1px);
         }
 
-        .tool-btn svg, .tool-btn i {
+        .tool-btn svg {
             width: 18px;
             height: 18px;
             fill: currentColor;
@@ -178,6 +176,9 @@
             cursor: pointer;
             transition: background 0.2s;
             border-radius: 0 5px 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .search-container button:hover {
@@ -252,6 +253,7 @@
             color: #ffffff;
             font-size: 14px;
             transition: color 0.2s;
+            font-weight: bold;
         }
 
         .panel-close:hover {
@@ -290,6 +292,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .draw-btn-item svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         .draw-btn-item:hover, .draw-btn-item.active-action {
@@ -369,6 +377,12 @@
             font-size: 15px;
             color: #334155;
             transition: background 0.2s;
+        }
+
+        .shape-item svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         .shape-item:hover, .shape-item.selected {
@@ -492,16 +506,16 @@
                     <svg viewBox="0 0 512 512"><path d="M12.41 216.14l182.89 104.38a64 64 0 0 0 61.4 0l182.89-104.38a24 24 0 0 0 0-41.82L256.7 69.94a64 64 0 0 0-61.4 0L12.41 174.32a24 24 0 0 0 0 41.82zM256 368a63.71 63.71 0 0 1-30.7-7.85l-132-75.3a16 16 0 0 0-23.86 14v48.63a32 32 0 0 0 16.57 28l153.29 87.52a64 64 0 0 0 61.4 0l153.29-87.52a32 32 0 0 0 16.57-28v-48.63a16 16 0 0 0-23.86-14l-132 75.3A63.71 63.71 0 0 1 256 368z"/></svg>
                 </button>
                 <button class="tool-btn" id="btnDraw" title="Herramientas de Dibujo">
-                    <i class="fas fa-pencil-alt"></i>
+                    <svg viewBox="0 0 512 512"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111.1-111c-4.7-4.7-12.3-4.7-17 0z"/></svg>
                 </button>
                 <button class="tool-btn" id="btnMeasure" title="Regla de Medición">
-                    <i class="fas fa-ruler-combined"></i>
+                    <svg viewBox="0 0 512 512"><path d="M160 288h-32v-32h32v32zm0-96h-32v-32h32v32zm128 96h-32v-32h32v32zm0-96h-32v-32h32v32zm128 96h-32v-32h32v32zm0-96h-32v-32h32v32zM464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 336H48V112h416v288z"/></svg>
                 </button>
                 <button class="tool-btn" id="btnLegend" title="Leyenda">
-                    <i class="fas fa-list-ul"></i>
+                    <svg viewBox="0 0 512 512"><path d="M80 368H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h64c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h64c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h64c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16zm416 336H144c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h352c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160H144c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h352c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160H144c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h352c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16z"/></svg>
                 </button>
                 <button class="tool-btn" id="btnBasemap" title="Mapas Base">
-                    <i class="fas fa-map"></i>
+                    <svg viewBox="0 0 576 512"><path d="M0 117.82v387.1c0 6.03 5.72 10.5 11.59 9.17l168.14-38.03 180.54 38.03c2.65.58 5.4.58 8.06 0l196.08-44.26c5.87-1.33 11.59-5.8 11.59-11.83V70.82c0-6.03-5.72-10.5-11.59-9.17L396.27 105.9 215.73 67.88c-2.65-.58-5.4-.58-8.06 0L11.59 112.14C5.72 113.47 0 117.94 0 123.97zm208 340.67V112.5l160 33.75v346l-160-33.76z"/></svg>
                 </button>
             </div>
         </div>
@@ -510,7 +524,9 @@
             <div class="search-container">
                 <div class="search-box-inner">
                     <input type="text" id="searchInput" placeholder="Buscar barrio, sector...">
-                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    <button id="searchBtn">
+                        <svg viewBox="0 0 512 512" style="width:14px;height:14px;fill:#fff;"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7h-16.3c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
                 </div>
                 <ul id="searchResults" class="search-results-list"></ul>
             </div>
@@ -519,36 +535,36 @@
         <div class="floating-panel" id="panelLayers">
             <div class="panel-header" id="panelLayersHeader">
                 <span>Capas de Información</span>
-                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+                <span class="panel-close" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body">
-                <label><input type="checkbox" id="chkCuencas"> <i class="fas fa-project-diagram layer-icon" style="color: #e31a1c;"></i> CUENCAS ALCANTARILLADO</label>
-                <label><input type="checkbox" id="chkBarrios"> <i class="fas fa-city layer-icon" style="color: #232323;"></i> BARRIOS</label>
-                <label><input type="checkbox" id="chkPantanos"> <i class="fas fa-tree layer-icon" style="color: #987db7;"></i> PANTANOS</label>
-                <label><input type="checkbox" id="chkRio"> <i class="fas fa-water layer-icon" style="color: #b89b6b;"></i> RÍO CAUCA</label>
-                <label><input type="checkbox" id="chkCienagas"> <i class="fas fa-tint layer-icon" style="color: #ff8b12;"></i> CIÉNAGAS</label>
-                <label><input type="checkbox" id="chkLagunas"> <i class="fas fa-water layer-icon" style="color: #729f6f;"></i> LAGUNAS</label>
-                <label><input type="checkbox" id="chkDrenajes"> <i class="fas fa-route layer-icon" style="color: #009ee2;"></i> DRENAJES</label>
+                <label><input type="checkbox" id="chkCuencas"> CUENCAS ALCANTARILLADO</label>
+                <label><input type="checkbox" id="chkBarrios"> BARRIOS</label>
+                <label><input type="checkbox" id="chkPantanos"> PANTANOS</label>
+                <label><input type="checkbox" id="chkRio"> RÍO CAUCA</label>
+                <label><input type="checkbox" id="chkCienagas"> CIÉNAGAS</label>
+                <label><input type="checkbox" id="chkLagunas"> LAGUNAS</label>
+                <label><input type="checkbox" id="chkDrenajes"> DRENAJES</label>
             </div>
         </div>
 
         <div class="floating-panel" id="panelDraw">
             <div class="panel-header" id="panelDrawHeader">
                 <span>Dibujar</span>
-                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+                <span class="panel-close" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body">
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Seleccionar modo de dibujo</span>
                 
                 <div class="draw-toolbar">
-                    <button class="draw-btn-item" id="drawPointer" title="Puntero/Seleccionar"><i class="fas fa-location-arrow"></i></button>
-                    <button class="draw-btn-item active-action" id="drawMarker" title="Punto"><i class="fas fa-map-pin"></i></button>
-                    <button class="draw-btn-item" id="drawPolyline" title="Línea"><i class="fas fa-slash"></i></button>
-                    <button class="draw-btn-item" id="drawPolygon" title="Polígono"><i class="fas fa-draw-polygon"></i></button>
-                    <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><i class="far fa-square"></i></button>
-                    <button class="draw-btn-item" id="drawCircle" title="Círculo"><i class="far fa-circle"></i></button>
-                    <button class="draw-btn-item" id="drawText" title="Texto"><i class="fas fa-font"></i></button>
-                    <button class="draw-btn-item" id="clearDrawings" title="Borrar"><i class="fas fa-eraser"></i></button>
+                    <button class="draw-btn-item" id="drawPointer" title="Puntero"><svg viewBox="0 0 512 512"><path d="M0 0l160 512 68-204 204-68L0 0z"/></svg></button>
+                    <button class="draw-btn-item active-action" id="drawMarker" title="Punto"><svg viewBox="0 0 384 512"><path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/></svg></button>
+                    <button class="draw-btn-item" id="drawPolyline" title="Línea"><svg viewBox="0 0 512 512"><path d="M496 416L32 96l64-64 464 320z"/></svg></button>
+                    <button class="draw-btn-item" id="drawPolygon" title="Polígono"><svg viewBox="0 0 512 512"><path d="M256 32L32 192l112 288h224l112-288L256 32z"/></svg></button>
+                    <button class="draw-btn-item" id="drawRectangle" title="Cuadrado"><svg viewBox="0 0 448 512"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z"/></svg></button>
+                    <button class="draw-btn-item" id="drawCircle" title="Círculo"><svg viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"/></svg></button>
+                    <button class="draw-btn-item" id="drawText" title="Texto"><svg viewBox="0 0 448 512"><path d="M432 32H16C7.2 32 0 39.2 0 48v96c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V96h128v320h-48c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h160c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16h-48V96h128v48c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V48c0-8.8-7.2-16-16-16z"/></svg></button>
+                    <button class="draw-btn-item" id="clearDrawings" title="Borrar"><svg viewBox="0 0 512 512"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64s14.3 32 32 32h384c17.7 0 32-14.3 32-32s-14.3-32-32-32h-96l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32l21.2 339c1.6 25.3 22.6 45 47.9 45h210.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg></button>
                 </div>
 
                 <span style="font-size: 11px; color: #64748b; margin-bottom: 6px; display: block;">Previsualización</span>
@@ -619,20 +635,20 @@
                     </div>
                 </div>
 
-                <button class="btn-danger" id="btnClearAll"><i class="fas fa-trash-alt"></i> Limpiar todo</button>
+                <button class="btn-danger" id="btnClearAll">Limpiar todo</button>
             </div>
         </div>
 
         <div class="floating-panel" id="panelMeasure">
             <div class="panel-header" id="panelMeasureHeader">
                 <span>Medición de Distancias</span>
-                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+                <span class="panel-close" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body">
                 <div class="measure-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-ruler"></i> Distancia</button>
-                    <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;"><i class="fas fa-draw-polygon"></i> Área</button>
-                    <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;"><i class="fas fa-trash-alt"></i> Reiniciar</button>
+                    <button class="action-btn" id="measureDistance" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;">Distancia</button>
+                    <button class="action-btn" id="measureArea" style="background:#fff; border:1px solid #009ee2; padding:8px; border-radius:6px; font-weight:700; color:#1D52A0; cursor:pointer;">Área</button>
+                    <button class="action-btn btn-danger" id="clearMeasurement" style="grid-column: span 2;">Reiniciar</button>
                 </div>
                 <div class="measure-result" id="measureResult" style="background:#f1f5f9; padding:8px; border-radius:6px; margin-top:10px; text-align:center;">Haz clic en una opción para medir en el mapa.</div>
             </div>
@@ -641,7 +657,7 @@
         <div class="floating-panel" id="panelLegend">
             <div class="panel-header" id="panelLegendHeader">
                 <span>Leyenda</span>
-                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+                <span class="panel-close" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body">
                 <div class="legend-item" style="display:flex; align-items:center; margin-bottom:8px;"><span style="width:18px; height:3px; background:rgba(227,26,28,1.0); margin-right:10px;"></span>CUENCAS ALCANTARILLADO</div>
@@ -657,7 +673,7 @@
         <div class="floating-panel" id="panelBasemap">
             <div class="panel-header" id="panelBasemapHeader">
                 <span>Mapas Base</span>
-                <i class="fas fa-times panel-close" onclick="closePanels()"></i>
+                <span class="panel-close" onclick="closePanels()">✕</span>
             </div>
             <div class="panel-body">
                 <label><input type="radio" name="basemap" id="radioSat" checked> GOOGLE SATELLITE</label>
@@ -718,7 +734,6 @@
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 1, maxZoom: 28 });
         map.addLayer(layer_GoogleSatellite_1);
 
-        // INSTANCIACIÓN DE CAPAS SIN AÑADIR AL MAPA POR DEFECTO
         var layer_DRENAJESCACUASIA_2 = new L.geoJson(json_DRENAJESCACUASIA_2, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(0,158,226,1.0)', weight: 2.0 }; } });
         var layer_LAGUNASCAUCASIA_3 = new L.geoJson(json_LAGUNASCAUCASIA_3, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(114,155,111,1.0)', fillOpacity: 0.5 }; } });
         var layer_CIENAGASCAUCASIA_4 = new L.geoJson(json_CIENAGASCAUCASIA_4, { onEachFeature: createPopFunction(), style: function() { return { color: 'rgba(35,35,35,1.0)', fillColor: 'rgba(255,139,18,1.0)', fillOpacity: 0.5 }; } });
@@ -866,7 +881,6 @@
         makeElementDraggable(document.getElementById("panelLegend"), document.getElementById("panelLegendHeader"));
         makeElementDraggable(document.getElementById("panelBasemap"), document.getElementById("panelBasemapHeader"));
 
-        // EVENTOS ENCIENDE/APAGA CAPAS
         document.getElementById('chkCuencas').onchange = function() { this.checked ? map.addLayer(layer_CUENCASALCANTARILLADO_8) : map.removeLayer(layer_CUENCASALCANTARILLADO_8); };
         document.getElementById('chkBarrios').onchange = function() { this.checked ? map.addLayer(layer_BARRIOSCAUCASIA_7) : map.removeLayer(layer_BARRIOSCAUCASIA_7); };
         document.getElementById('chkPantanos').onchange = function() { this.checked ? map.addLayer(layer_PANTANOSCAUCASIA_6) : map.removeLayer(layer_PANTANOSCAUCASIA_6); };
@@ -878,7 +892,7 @@
         document.getElementById('radioSat').onchange = function() { if (this.checked) { map.addLayer(layer_GoogleSatellite_1); map.removeLayer(layer_OSMStandard_0); } };
         document.getElementById('radioOsm').onchange = function() { if (this.checked) { map.addLayer(layer_OSMStandard_0); map.removeLayer(layer_GoogleSatellite_1); } };
 
-        // DIBUJO Y PREVISUALIZACIÓN
+        // SISTEMA DE DIBUJO
         var currentDrawer = null;
         var currentGeometryMode = 'marker';
 
@@ -899,18 +913,19 @@
             shapeGrid.innerHTML = '';
             var items = [];
 
+            var svgCircle = (c) => `<svg viewBox="0 0 512 512" style="fill:${c}"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"/></svg>`;
+            var svgSquare = (c) => `<svg viewBox="0 0 448 512" style="fill:${c}"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z"/></svg>`;
+            var svgPin = (c) => `<svg viewBox="0 0 384 512" style="fill:${c}"><path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/></svg>`;
+
             if (mode === 'marker') {
                 items = [
-                    { icon: '<i class="fas fa-circle" style="color:#000;"></i>' },
-                    { icon: '<i class="fas fa-square" style="transform:rotate(45deg);color:#000;"></i>' },
-                    { icon: '<i class="fas fa-map-pin" style="color:#000;"></i>' },
-                    { icon: '<i class="fas fa-square" style="color:#000;"></i>' },
-                    { icon: '<i class="fas fa-star" style="color:#000;"></i>' },
-                    { icon: '<i class="fas fa-bookmark" style="color:#000;"></i>' },
-                    { icon: '<i class="fas fa-circle" style="color:#009ee2;"></i>', color:'#009ee2' },
-                    { icon: '<i class="fas fa-map-pin" style="color:#009ee2;"></i>', color:'#009ee2' },
-                    { icon: '<i class="fas fa-circle" style="color:#2ecc71;"></i>', color:'#2ecc71' },
-                    { icon: '<i class="fas fa-map-pin" style="color:#2ecc71;"></i>', color:'#2ecc71' }
+                    { icon: svgCircle('#000000') },
+                    { icon: svgSquare('#000000') },
+                    { icon: svgPin('#000000') },
+                    { icon: svgCircle('#009ee2'), color:'#009ee2' },
+                    { icon: svgPin('#009ee2'), color:'#009ee2' },
+                    { icon: svgCircle('#2ecc71'), color:'#2ecc71' },
+                    { icon: svgPin('#2ecc71'), color:'#2ecc71' }
                 ];
             } else if (mode === 'polyline') {
                 var colors = ['#2b6cb0', '#c53030', '#2f855a', '#6b46c1', '#009ee2', '#dd6b20'];
